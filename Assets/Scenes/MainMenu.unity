@@ -130,21 +130,9 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2493597525861206846, guid: 1597bf2e32af4984f87db75e6740e5d2, type: 3}
-      propertyPath: m_PresetInfoIsWorld
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 4184348596964766255, guid: 1597bf2e32af4984f87db75e6740e5d2, type: 3}
       propertyPath: m_Name
       value: MainMenuCanvas
-      objectReference: {fileID: 0}
-    - target: {fileID: 6768437204024879146, guid: 1597bf2e32af4984f87db75e6740e5d2, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 2097995889}
-    - target: {fileID: 6768437204024879146, guid: 1597bf2e32af4984f87db75e6740e5d2, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: SwitchToGameScene
       objectReference: {fileID: 0}
     - target: {fileID: 7336570065318986443, guid: 1597bf2e32af4984f87db75e6740e5d2, type: 3}
       propertyPath: m_Pivot.x
@@ -570,17 +558,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2097995889 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5197588735646362701, guid: 1597bf2e32af4984f87db75e6740e5d2, type: 3}
-  m_PrefabInstance: {fileID: 4195320}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4891a03f9cc8fc8439b5774ec7134c01, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
