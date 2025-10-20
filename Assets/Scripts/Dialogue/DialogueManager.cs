@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
 using TMPro;
+using System;
 
 [System.Serializable]
 public class DialogueData
@@ -361,21 +362,23 @@ public class DialogueManager : MonoBehaviour
         typingCoroutine = StartCoroutine(TypingCoroutine(targetText, textContent));
     }
 
-    public void UpdateTypingState(bool typing)
-    {
-        isTyping = typing;
-        // 找到对话框面板的交互脚本，更新状态
-        DialoguePanelInteract mainInteract = DialoguePanel_Main.GetComponent<DialoguePanelInteract>();
-        DialoguePanelInteract minorInteract = DialoguePanel_Minor.GetComponent<DialoguePanelInteract>();
-        mainInteract?.SetTypingState(typing);
-        minorInteract?.SetTypingState(typing);
-    }
+    //public void UpdateTypingState(bool typing)
+    //{
+    //    isTyping = typing;
+    //    // 找到对话框面板的交互脚本，更新状态
+    //    DialoguePanelInteract mainInteract = DialoguePanel_Main.GetComponent<DialoguePanelInteract>();
+    //    DialoguePanelInteract minorInteract = DialoguePanel_Minor.GetComponent<DialoguePanelInteract>();
+    //    mainInteract?.SetTypingState(typing);
+    //    minorInteract?.SetTypingState(typing);
+    //}
+
+    public event Action<bool> OnTypingStateChanged;
 
     // 逐字显示协程
     private IEnumerator TypingCoroutine(TMP_Text targetText, string textContent)
     {
         isTyping = true;
-        UpdateTypingState(true); //开始逐字
+        OnTypingStateChanged?.Invoke(true); //开始逐字
         targetText.richText = true;
         int currentPos = 0;
 
@@ -395,7 +398,7 @@ public class DialogueManager : MonoBehaviour
         }
 
         isTyping = false;
-        UpdateTypingState(false); //结束逐字
+        OnTypingStateChanged?.Invoke(false);  //结束逐字
     }
 
     // 跳过逐字显示（直接显示完整文本）
@@ -406,7 +409,7 @@ public class DialogueManager : MonoBehaviour
         StopCoroutine(typingCoroutine);
         typingCoroutine = null;
         isTyping = false;
-        UpdateTypingState(false);
+        OnTypingStateChanged?.Invoke(false);
 
         if (DialoguePanel_Main.activeSelf)
             Text_MainDialogue.text = currentData.Text;

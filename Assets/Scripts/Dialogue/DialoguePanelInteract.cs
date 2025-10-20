@@ -5,25 +5,36 @@ public class DialoguePanelInteract : Interactable
     private DialogueManager dialogueManager;
     private bool isTyping;
 
-    void Awake()
+    void OnEnable()
     {
         dialogueManager = FindObjectOfType<DialogueManager>();
-        if (dialogueManager == null)
+        if (dialogueManager != null)
+        {
+            dialogueManager.OnTypingStateChanged += OnTypingStateChanged;
+        }
+        else
         {
             Debug.LogError("场景中未找到 DialogueManager！");
             enabled = false;
         }
     }
 
-    // 由DialogueManager调用，同步逐字显示状态
-    public void SetTypingState(bool typing)
+    void OnDisable()
+    {
+        if (dialogueManager != null)
+        {
+            dialogueManager.OnTypingStateChanged -= OnTypingStateChanged;
+        }
+    }
+
+    private void OnTypingStateChanged(bool typing)
     {
         isTyping = typing;
     }
 
     public override void TriggerOnClick()
     {
-        // 选项面板激活时，不响应对话框点击
+        //选项面板激活时，不响应对话框点击
         if (dialogueManager.Panel_Options.activeSelf)
             return;
 
