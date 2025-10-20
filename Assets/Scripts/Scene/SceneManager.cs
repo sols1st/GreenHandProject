@@ -12,6 +12,8 @@ public class SceneManager : MonoBehaviour
 {
 
     private InputSystem _inputSystem;
+    public GameObject endPoint;
+    public GameObject sceneCanvas;
 
     private void Awake()
     {
@@ -24,7 +26,9 @@ public class SceneManager : MonoBehaviour
     {
         // 注册InputSystem点击事件
         _inputSystem.Game.Click.performed += OnClickPerformed;
-        // todo 结束位置检测
+        endPoint.GetComponent<EndPoint>().CheckIsActive();
+        CardManager.Instance.UpdateEndPoint(endPoint);
+        CardManager.Instance.UpdateSceneCanvas(sceneCanvas);
     }
 
     private void OnDestroy()
@@ -38,7 +42,6 @@ public class SceneManager : MonoBehaviour
     /// </summary>
     private void OnClickPerformed(InputAction.CallbackContext context)
     {
-        Debug.Log("OnClickPerformed");
 
         // 获取鼠标点击位置
         // 检测鼠标位置
@@ -73,7 +76,6 @@ public class SceneManager : MonoBehaviour
             // 向上查找直到找到有Interactable的父对象
             while (hitObject != null)
             {
-                Debug.Log("hitParent:" + hitObject.name);
                 var interactable = hitObject.GetComponent<Interactable>();
                 if (interactable != null)
                 {
