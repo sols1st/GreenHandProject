@@ -2,8 +2,9 @@ using UnityEngine;
 
 public class DemoSceneEndPoint : Interactable
 {
+    public GameObject endChoiceWindow;
     public override void TriggerOnClick()
     {
-        Debug.Log("Demo Scene EndPoint Trigger On Click");
+        endChoiceWindow.SetActive(true);
     }
 }

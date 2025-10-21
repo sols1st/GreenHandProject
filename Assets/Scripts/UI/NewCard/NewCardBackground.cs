@@ -7,6 +7,15 @@ public class NewCardBackground : Interactable
 
     public override void TriggerOnClick()
     {
-        Debug.Log("New card background is being triggered");
+        var cur = transform;
+        while (cur != null)
+        {
+            if (cur.GetComponent<Canvas>() != null)
+            {
+                cur.gameObject.SetActive(false);
+                break;
+            }
+            cur = cur.parent;
+        }
     }
 }
