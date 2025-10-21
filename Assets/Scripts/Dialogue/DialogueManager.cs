@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using System.IO;
 using TMPro;
 using System;
+using System.Net;
 
 [System.Serializable]
 public class DialogueData
@@ -198,6 +199,14 @@ public class DialogueManager : MonoBehaviour
                     ShowDialogueText(Text_MinorDialogue, currentData.Text);
                 }
                 ShowOptions(currentData.Choice);
+                break;
+
+            case "U005"://大字报触发节点
+                //隐藏对话面板
+                HideAllPanels();
+                HideOptions();
+                //触发大字报显示事件
+                TriggerBigPosterEvent();
                 break;
 
             default:
@@ -464,6 +473,56 @@ public class DialogueManager : MonoBehaviour
         {
             Debug.LogWarning($"未找到背景Sprite：{backgroundPath}，请检查Resources路径和文件名！");
             BackgroundGameObject.SetActive(false);
+        }
+    }
+
+    /// <summary>
+    /// 触发大字报显示事件
+    /// U005自动调用
+    /// </summary>
+    private void TriggerBigPosterEvent()
+    {
+        Debug.Log("触发大字报显示");
+        if (DialogueEventSystem.Instance != null)
+        {
+            // 触发大字报显示事件，通知其他系统显示大字报
+            DialogueEventSystem.Instance.OnShowBigPoster?.Invoke();
+        }
+        else
+        {
+            Debug.LogError("DialogueEventSystem实例未找到，无法触发大字报事件！");
+            // 自动继续到下一句对话
+            ContinueAfterBigPoster();
+        }
+            
+    }
+
+    /// <summary>
+    /// 大字报关闭后继续对话流程
+    /// 这个方法需要由大字报系统在关闭时调用
+    /// </summary>
+    public void ContinueAfterBigPoster()
+    {
+        Debug.Log("大字报关闭，继续对话流程");
+        currentIndex++;
+
+        // 检查是否还有对话
+        if (currentIndex < dialogueList.Count)
+        {
+            ShowCurrentDialogue();
+        }
+        else
+        {
+            HideAllPanels();
+            // 调用场景加载器的结局处理方法
+            if (SceneLoader.Instance != null)
+            {
+                SceneLoader.Instance.HandleEnding();
+            }
+            else
+            {
+                Debug.LogError("SceneLoader实例未找到，无法处理结局");
+            }
         }
     }
 }
