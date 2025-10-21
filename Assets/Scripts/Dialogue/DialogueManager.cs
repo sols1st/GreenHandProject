@@ -362,16 +362,6 @@ public class DialogueManager : MonoBehaviour
         typingCoroutine = StartCoroutine(TypingCoroutine(targetText, textContent));
     }
 
-    //public void UpdateTypingState(bool typing)
-    //{
-    //    isTyping = typing;
-    //    // 找到对话框面板的交互脚本，更新状态
-    //    DialoguePanelInteract mainInteract = DialoguePanel_Main.GetComponent<DialoguePanelInteract>();
-    //    DialoguePanelInteract minorInteract = DialoguePanel_Minor.GetComponent<DialoguePanelInteract>();
-    //    mainInteract?.SetTypingState(typing);
-    //    minorInteract?.SetTypingState(typing);
-    //}
-
     public event Action<bool> OnTypingStateChanged;
 
     // 逐字显示协程
