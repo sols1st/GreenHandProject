@@ -23,6 +23,8 @@ public class DialogueData
 
 public class DialogueManager : MonoBehaviour
 {
+    // 单例实例
+    public static DialogueManager Instance;
     // UI组件引用
     [Header("【主面板】重要角色/旁白共用")]
     public GameObject DialoguePanel_Main; // 主对话面板
@@ -48,8 +50,12 @@ public class DialogueManager : MonoBehaviour
     [Header("【背景】显示背景精灵图")]
     public GameObject BackgroundGameObject; // 用于显示背景的游戏对象
 
+    [Header("【对话CSV文件】")]
+    public TextAsset mainDialogueCSV;      // 主线对话CSV
+    public TextAsset inquiryDialogueCSV;   // 探索问询CSV
+    public TextAsset endingDialogueCSV;    // 结局对话CSV
+
     [Header("【配置项】")]
-    public TextAsset dialogueCsv;   // 对话CSV文件
     public float typeSpeed = 0.05f;  // 逐字显示速度
     public string portraitResPath = "Portraits/"; // 重要角色立绘资源路径
     public string avatarResPath = "Avatars/";   // 次要角色头像资源路径
@@ -60,39 +66,47 @@ public class DialogueManager : MonoBehaviour
     public Coroutine typingCoroutine;  // 逐字显示协程
     public bool isTyping = false;   // 是否正在逐字显示
 
+    private void Awake()
+    {
+        // 实现单例模式
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject); // 跨场景不销毁
+        }
+        else
+        {
+            Destroy(gameObject); // 如果已有实例，销毁重复的对象
+        }
+    }
 
     // 加载CSV + 显示首条对话
     void Start()
     {
+        if (Instance != this) return;
         // 初始隐藏所有面板和选项
         HideAllPanels();
         HideOptions();
 
-        // 加载CSV数据
-        if (dialogueCsv != null)
+        // 加载主线对话CSV
+        if (mainDialogueCSV != null)
         {
-            LoadCsvData();
-            if (dialogueList.Count > 0)
-            {
-                ShowCurrentDialogue(); // 显示第一条对话
-            }
-            else
-            {
-                Debug.LogError("CSV数据为空，请检查文件内容！");
-            }
+            LoadDialogueData(mainDialogueCSV);
         }
         else
         {
-            Debug.LogError("未赋值对话CSV文件，请在Inspector中拖入！");
+            Debug.LogError("主线对话CSV文件未分配");
         }
     }
 
-
-    // 加载CSV数据
-    private void LoadCsvData()
+    /// <summary>
+    /// 加载CSV数据
+    /// </summary>
+    /// <param name="csvFile">要加载的CSV文件</param>
+    private void LoadCsvData(TextAsset csvFile)
     {
         dialogueList.Clear();
-        StringReader reader = new StringReader(dialogueCsv.text);
+        StringReader reader = new StringReader(csvFile.text);
 
         // 跳过表头
         string headerLine = reader.ReadLine();
@@ -135,16 +149,73 @@ public class DialogueManager : MonoBehaviour
         Debug.Log($"CSV加载成功，共{dialogueList.Count}条对话数据");
     }
 
+    /// <summary>
+    /// 加载指定的CSV文件数据
+    /// 供外部调用切换不同对话文件
+    /// </summary>
+    /// <param name="csvFile">要加载的CSV文件</param>
+    public void LoadDialogueData(TextAsset csvFile)
+    {
+        if (csvFile == null)
+        {
+            Debug.LogError("传入的CSV文件为空，无法加载对话数据！");
+            return;
+        }
+
+        currentIndex = 0;
+        LoadCsvData(csvFile);
+        ShowCurrentDialogue();
+    }
+
+    /// <summary>
+    /// 切换到主线对话
+    /// 在游戏开始时调用
+    /// </summary>
+    public void SwitchToMainDialogue()
+    {
+        LoadDialogueData(mainDialogueCSV);
+    }
+
+    /// <summary>
+    /// 切换到探索问询对话
+    /// 在探索阶段调用
+    /// </summary>
+    public void SwitchToInquiryDialogue()
+    {
+        LoadDialogueData(inquiryDialogueCSV);
+    }
+
+    /// <summary>
+    /// 切换到结局对话
+    /// 在游戏结局时调用
+    /// </summary>
+    public void SwitchToEndingDialogue()
+    {
+        LoadDialogueData(endingDialogueCSV);
+    }
+
 
     // 显示当前对话
     public void ShowCurrentDialogue()
     {
-        // 对话结束判断
-        if (currentIndex >= dialogueList.Count)
-        {
-            Debug.Log("对话流程结束！");
+        // 对话结束判断 - 检查索引越界或Next为"Ending"
+        if (currentIndex >= dialogueList.Count || dialogueList[currentIndex].Next == "Ending")
+        { 
+            Debug.Log("对话流程结束或到达结局！");
             HideAllPanels();
             HideOptions();
+
+            // 调用场景加载器的结局处理方法
+            if (SceneLoader.Instance != null)
+            {
+                SceneLoader.Instance.HandleEnding();
+            }
+            else
+            {
+                Debug.LogError("SceneLoader实例未找到，无法处理结局");
+                // 备用方案：直接返回主菜单
+                UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
+            }
             return;
         }
 
