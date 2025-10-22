@@ -1,16 +1,10 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
-/// <summary>
-/// 场景管理器 - 负责全局交互监听和管理
-/// 每个场景都需要一个实例来处理该场景的交互逻辑
-/// </summary>
-public class SceneManager : MonoBehaviour
+public class SceneController : MonoBehaviour
 {
-
     private InputSystem _inputSystem;
     public GameObject endPoint;
     public GameObject sceneCanvas;
@@ -35,6 +29,8 @@ public class SceneManager : MonoBehaviour
     {
         // 注销InputSystem点击事件
         _inputSystem.Game.Click.performed -= OnClickPerformed;
+        _inputSystem.Disable();
+        _inputSystem = null;
     }
 
     /// <summary>
@@ -117,7 +113,6 @@ public class SceneManager : MonoBehaviour
 
         // 使用2D raycast检测所有2D对象
         RaycastHit2D[] hits2D = Physics2D.RaycastAll(worldPosition2D, Vector2.zero);
-        Debug.Log(hits2D.Length);
         foreach (var hit2D in hits2D)
         {
             
