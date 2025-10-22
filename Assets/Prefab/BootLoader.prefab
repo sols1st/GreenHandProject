@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &4633863725601945092
+--- !u!1 &2502501567183900758
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,49 +8,40 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 8937464815767182236}
-  - component: {fileID: 501612409900884312}
+  - component: {fileID: 3949225766263381746}
+  - component: {fileID: 6944764055606261287}
   m_Layer: 0
-  m_Name: DialogueManager
+  m_Name: BootLoader
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &8937464815767182236
+--- !u!4 &3949225766263381746
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4633863725601945092}
+  m_GameObject: {fileID: 2502501567183900758}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.15601686, y: 0.09685783, z: 0.06979426}
+  m_LocalPosition: {x: 539.59863, y: 300.4718, z: -1.083355}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &501612409900884312
+--- !u!114 &6944764055606261287
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4633863725601945092}
+  m_GameObject: {fileID: 2502501567183900758}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 562b8127bae5d8e4cb5b45678770ee4d, type: 3}
+  m_Script: {fileID: 11500000, guid: 78daabe03db721a47a1ffc879bc749bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainDialogueCSV: {fileID: 4900000, guid: 88e5030cf2dc973488eb3d73e0258595, type: 3}
-  inquiryDialogueCSV: {fileID: 4900000, guid: 567cfbc46089a024593ab3a9223be33c, type: 3}
-  endingDialogueCSV: {fileID: 4900000, guid: aa60b56515015b3478000a49a9314de7, type: 3}
-  typeSpeed: 0.05
-  portraitResPath: Portraits/
-  avatarResPath: Avatars/
-  backgroundResPath: Background/
-  dialogueList: []
-  currentIndex: 0
-  isTyping: 0
+  firstSceneName: MainMenu
