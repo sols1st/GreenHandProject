@@ -22,8 +22,10 @@ public class SceneLoader : MonoBehaviour
         else
         {
             Destroy(gameObject); // 如果已有实例，销毁重复的对象
+            return;
         }
     }
+    
 
     /// <summary>
     /// 从主菜单开始游戏
