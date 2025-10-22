@@ -67,18 +67,11 @@ public class DialogueManager : MonoBehaviour
     public void RegisterSceneUI(SceneDialogueUI sceneUI)
     {
         currentSceneUI = sceneUI;
-        // 如果有等待中的对话，继续显示
+        // 如果有等待中的对话，立即显示
         if (dialogueList.Count > 0 && currentIndex < dialogueList.Count)
         {
-            // 延迟一帧执行，确保所有组件已初始化
-            StartCoroutine(DelayedShowDialogue());
+            ShowCurrentDialogue();
         }
-    }
-
-    private IEnumerator DelayedShowDialogue()
-    {
-        yield return null; // 等待一帧
-        ShowCurrentDialogue();
     }
 
     /// <summary>
@@ -107,7 +100,6 @@ public class DialogueManager : MonoBehaviour
     {
         if (currentSceneUI == null)
         {
-            Debug.LogWarning("DialogueManager: 当前没有有效的UI引用，请确保SceneDialogueUI已注册");
             return false;
         }
         return true;
