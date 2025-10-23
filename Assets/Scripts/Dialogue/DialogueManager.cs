@@ -209,7 +209,7 @@ public class DialogueManager : MonoBehaviour
 
     /// <summary>
     /// 切换到结局对话
-    /// 在游戏结局时调用
+    /// 在推理结局时调用
     /// </summary>
     public void SwitchToEndingDialogue()
     {
@@ -245,6 +245,13 @@ public class DialogueManager : MonoBehaviour
 
         DialogueData currentData = dialogueList[currentIndex];
         string currentUiType = currentData.UI;
+
+        //检查并获取卡牌
+        if (!string.IsNullOrEmpty(currentData.Card))
+        {
+            CardManager.Instance.GetNewCard(currentData.Card);
+            Debug.Log($"获得新卡牌: {currentData.Card}");
+        }
 
         // 重置状态：隐藏所有面板、选项，停止逐字协程
         HideAllPanels();
@@ -297,11 +304,17 @@ public class DialogueManager : MonoBehaviour
                 break;
 
             case "U005"://大字报触发节点
-                //隐藏对话面板
                 HideAllPanels();
                 HideOptions();
-                //触发大字报显示事件
-                TriggerBigPosterEvent();
+                //触发结局大字报显示
+                if (CardManager.Instance != null)
+                {
+                    CardManager.Instance.ShowEnding();
+                }
+                else
+                {
+                    ContinueAfterBigPoster();
+                }
                 break;
 
             default:
@@ -575,27 +588,6 @@ public class DialogueManager : MonoBehaviour
             // 非S005和S001的场景，清空背景
             currentSceneUI.SetBackground(null);
         }
-    }
-
-    /// <summary>
-    /// 触发大字报显示事件
-    /// U005自动调用
-    /// </summary>
-    private void TriggerBigPosterEvent()
-    {
-        Debug.Log("触发大字报显示");
-        if (DialogueEventSystem.Instance != null)
-        {
-            // 触发大字报显示事件，通知其他系统显示大字报
-            DialogueEventSystem.Instance.OnShowBigPoster?.Invoke();
-        }
-        else
-        {
-            Debug.LogError("DialogueEventSystem实例未找到，无法触发大字报事件！");
-            // 自动继续到下一句对话
-            ContinueAfterBigPoster();
-        }
-            
     }
 
     /// <summary>
