@@ -32,10 +32,6 @@ public class BootLoader : MonoBehaviour
         {
             Debug.LogError("BootLoader: DialogueManager单例未初始化！");
         }
-        if (DialogueEventSystem.Instance == null)
-        {
-            Debug.LogError("BootLoader: DialogueEventSystem单例未初始化！");
-        }
         // 在此处添加其他必要单例的验证
     }
 

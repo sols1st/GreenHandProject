@@ -8,7 +8,7 @@ using System;
 using System.Net;
 
 [System.Serializable]
-public class DialogueData
+public class DialogueData 
 {
     public string Process;
     public string Scene;
@@ -18,7 +18,17 @@ public class DialogueData
     public string UI;
     public string Choice;
     public string Next;
-    public string Card;
+}
+
+public class OptionData
+{
+    public string OptionText;
+    public string TargetProcess;
+    public string RequireCard;
+    public string GainedCard;
+
+    public bool RequiresCard => !string.IsNullOrEmpty(RequireCard);
+    public bool GrantsCard => !string.IsNullOrEmpty(GainedCard);
 }
 
 public class DialogueManager : MonoBehaviour
@@ -46,17 +56,22 @@ public class DialogueManager : MonoBehaviour
 
     public event Action<bool> OnTypingStateChanged;
 
+    private OptionData currentOption;//当前选项数据
+    private List<OptionData> activeOptions = new List<OptionData>();//激活的选项
+
+    public event Action<string> OnCardGained;//获得卡牌事件
+
     private void Awake()
     {
-        // 实现单例模式
+        // 单例模式
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject); // 跨场景不销毁
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
-            Destroy(gameObject); // 如果已有实例，销毁重复的对象
+            Destroy(gameObject);
         }
     }
 
@@ -132,11 +147,6 @@ public class DialogueManager : MonoBehaviour
 
         // 跳过表头
         string headerLine = reader.ReadLine();
-        if (string.IsNullOrEmpty(headerLine))
-        {
-            Debug.LogError("CSV表头为空，格式错误！");
-            return;
-        }
 
         // 逐行读取对话数据
         while (reader.Peek() != -1)
@@ -146,11 +156,6 @@ public class DialogueManager : MonoBehaviour
                 continue; // 跳过空行和注释行
 
             string[] dataParts = dataLine.Split(',');
-            if (dataParts.Length != 9)
-            {
-                Debug.LogWarning($"CSV行格式错误：行内容「{dataLine}」，字段数{dataParts.Length}（需9个）");
-                continue;
-            }
 
             // 解析并存储对话数据
             DialogueData newData = new DialogueData
@@ -162,13 +167,11 @@ public class DialogueManager : MonoBehaviour
                 Text = dataParts[4].Trim(),
                 UI = dataParts[5].Trim(),
                 Choice = dataParts[6].Trim(),
-                Next = dataParts[7].Trim(),
-                Card = dataParts[8].Trim()
+                Next = dataParts[7].Trim()
             };
             dialogueList.Add(newData);
         }
         reader.Close();
-        Debug.Log($"CSV加载成功，共{dialogueList.Count}条对话数据");
     }
 
     /// <summary>
@@ -246,13 +249,6 @@ public class DialogueManager : MonoBehaviour
         DialogueData currentData = dialogueList[currentIndex];
         string currentUiType = currentData.UI;
 
-        //检查并获取卡牌
-        if (!string.IsNullOrEmpty(currentData.Card))
-        {
-            CardManager.Instance.GetNewCard(currentData.Card);
-            Debug.Log($"获得新卡牌: {currentData.Card}");
-        }
-
         // 重置状态：隐藏所有面板、选项，停止逐字协程
         HideAllPanels();
         HideOptions();
@@ -266,12 +262,12 @@ public class DialogueManager : MonoBehaviour
         // 根据UI类型（U001-U004）切换面板
         switch (currentUiType)
         {
-            case "U001": // 旁白：仅主面板，无角色立绘/名称
-                ShowMainPanel(showPortrait: false, showName: false);
-                ShowDialogueText(currentSceneUI.Text_MainDialogue, currentData.Text);
+            case "U001": // 旁白
+                ShowNarrationPanel();
+                ShowDialogueText(currentSceneUI.Text_Narration, currentData.Text);
                 break;
 
-            case "U002": // 重要角色：主面板+立绘+名称
+            case "U002": // 主要角色：主面板+立绘+名称
                 ShowMainPanel(showPortrait: true, showName: true);
                 currentSceneUI.Text_MainName.text = currentData.Character_Name;
                 LoadSpriteToImage(currentSceneUI.Image_MainPortrait, portraitResPath + currentData.Character);
@@ -329,6 +325,13 @@ public class DialogueManager : MonoBehaviour
 
     // UI控制方法
     #region UI控制
+    //显示旁白
+    private void ShowNarrationPanel()
+    {
+        if (!HasValidUI()) return;
+        currentSceneUI.DialoguePanel_Narration.SetActive(true);
+    }
+
     // 显示主面板（控制立绘、名称显隐）
     private void ShowMainPanel(bool showPortrait, bool showName)
     {
@@ -337,9 +340,8 @@ public class DialogueManager : MonoBehaviour
         if (currentSceneUI.DialoguePanel_Main != null)
         {
             currentSceneUI.DialoguePanel_Main.SetActive(true);
-            currentSceneUI.Image_MainPortrait?.gameObject.SetActive(showPortrait);
-            currentSceneUI.Panel_MainName?.SetActive(showName);
-            currentSceneUI.Text_MainName?.gameObject.SetActive(showName);
+            currentSceneUI.Image_MainPortrait?.gameObject.SetActive(true);
+            currentSceneUI.Text_MainName?.gameObject.SetActive(true);
         }
         else
         {
@@ -355,9 +357,8 @@ public class DialogueManager : MonoBehaviour
         if (currentSceneUI.DialoguePanel_Minor != null)
         {
             currentSceneUI.DialoguePanel_Minor.SetActive(true);
-            currentSceneUI.Image_MinorAvatar?.gameObject.SetActive(showAvatar);
-            currentSceneUI.Panel_MinorName?.SetActive(showName);
-            currentSceneUI.Text_MinorName?.gameObject.SetActive(showName);
+            currentSceneUI.Image_MinorAvatar?.gameObject.SetActive(true);
+            currentSceneUI.Text_MinorName?.gameObject.SetActive(true);
         }
         else
         {
@@ -369,7 +370,7 @@ public class DialogueManager : MonoBehaviour
     private void HideAllPanels()
     {
         if (!HasValidUI()) return;
-
+        currentSceneUI.DialoguePanel_Narration?.SetActive(false);
         currentSceneUI.DialoguePanel_Main?.SetActive(false);
         currentSceneUI.DialoguePanel_Minor?.SetActive(false);
     }
@@ -383,54 +384,130 @@ public class DialogueManager : MonoBehaviour
             HideOptions();
             return;
         }
-
         currentSceneUI.Panel_Options.SetActive(true);
+
         string[] optionParts = choiceStr.Split(';');
 
         // 处理选项1
-        if (optionParts.Length >= 1 && currentSceneUI.Button_Option1 != null && currentSceneUI.Text_Option1 != null)
+        if (optionParts.Length >= 1 && currentSceneUI.Button_Option1 != null)
         {
-            string[] opt1 = optionParts[0].Split(':');
-            if (opt1.Length == 2)
-            {
-                currentSceneUI.Text_Option1.text = opt1[0];
-                string targetProcess = opt1[1];
-                OptionButtonInteract interact1 = currentSceneUI.Button_Option1.GetComponent<OptionButtonInteract>();
-                if (interact1 != null)
-                {
-                    interact1.SetTargetProcess(targetProcess);
-                }
-                currentSceneUI.Button_Option1.onClick.RemoveAllListeners();
-                currentSceneUI.Button_Option1.gameObject.SetActive(true);
-            }
-            else
-            {
-                currentSceneUI.Button_Option1.gameObject.SetActive(false);
-                Debug.LogWarning($"选项1格式错误：{optionParts[0]}（需「文本:进程」格式）");
-            }
+            SetupOptionButton(currentSceneUI.Button_Option1.gameObject, optionParts[0], 0);
+        }
+        else
+        {
+            currentSceneUI.Button_Option1?.gameObject.SetActive(false);
+        }
+        // 处理选项2
+        if (optionParts.Length >= 2 && currentSceneUI.Button_Option2 != null)
+        {
+            SetupOptionButton(currentSceneUI.Button_Option2.gameObject, optionParts[1], 1);
+        }
+        else
+        {
+            currentSceneUI.Button_Option2?.gameObject.SetActive(false);
+        }
+    }
+
+    // 设置选项按钮
+    private void SetupOptionButton(GameObject buttonObject, string optionStr, int optionIndex)
+    {
+        buttonObject.SetActive(true);
+        
+        string[] optData = optionStr.Split(':');
+
+        if (optData.Length < 2)
+        {
+            Debug.LogError($"选项格式错误：{optionStr}");
+            buttonObject.SetActive(false);
+            return;
         }
 
-        // 处理选项2
-        if (optionParts.Length >= 2 && currentSceneUI.Button_Option2 != null && currentSceneUI.Text_Option2 != null)
+        // 创建选项数据
+        OptionData option = new OptionData
         {
-            string[] opt2 = optionParts[1].Split(':');
-            if (opt2.Length == 2)
+            OptionText = optData[0],
+            TargetProcess = optData[1],
+            RequireCard = optData.Length > 2 ? optData[2] : "",
+            GainedCard = optData.Length > 3 ? optData[3] : ""
+        };
+        // 设置按钮文本
+        TMP_Text buttonText = optionIndex == 0 ? currentSceneUI.Text_Option1 : currentSceneUI.Text_Option2;
+        if (buttonText != null)
+            buttonText.text = option.OptionText;
+        // 设置交互组件
+        OptionButtonInteract interact = buttonObject.GetComponent<OptionButtonInteract>();
+        if (interact == null)
+            interact = buttonObject.AddComponent<OptionButtonInteract>();
+        interact.SetOptionData(option);
+
+    }
+
+    // 处理选项（不需要卡牌）
+    public void ProcessOption(OptionData option)
+    {
+        HideOptions();
+
+        // 处理获得卡牌
+        if (!string.IsNullOrEmpty(option.GainedCard))
+        {
+            GainCard(option.GainedCard);
+        }
+
+        // 跳转到目标进程
+        OnOptionClicked(option.TargetProcess);
+    }
+
+    // 打开卡牌库选项（需要卡牌）
+    public void OpenCardSelection(OptionData option)
+    {
+        HideOptions();
+        currentOption = option;
+
+        // 打开卡牌库选择界面
+        //CardBagManager.Instance.Open("Dialogue");
+    }
+
+    // 处理卡牌选择结果
+    public void OnCardSelected(string selectedCardId)
+    {
+        if (currentOption == null)return;
+
+        // 检查卡牌是否正确
+        if (selectedCardId == currentOption.RequireCard)
+        {
+            HideOptions();
+
+            // 处理获得卡牌
+            if (!string.IsNullOrEmpty(currentOption.GainedCard))
             {
-                currentSceneUI.Text_Option2.text = opt2[0];
-                string targetProcess = opt2[1];
-                OptionButtonInteract interact2 = currentSceneUI.Button_Option2.GetComponent<OptionButtonInteract>();
-                if (interact2 != null)
-                {
-                    interact2.SetTargetProcess(targetProcess);
-                }
-                currentSceneUI.Button_Option2.onClick.RemoveAllListeners();
-                currentSceneUI.Button_Option2.gameObject.SetActive(true);
+                GainCard(currentOption.GainedCard);
             }
-            else
-            {
-                currentSceneUI.Button_Option2.gameObject.SetActive(false);
-                Debug.LogWarning($"选项2格式错误：{optionParts[1]}（需「文本:进程」格式）");
-            }
+
+            // 跳转到目标进程
+            OnOptionClicked(currentOption.TargetProcess);
+        }
+        else
+        {
+            // 卡牌错误，隐藏面板结束对话
+            HideAllPanels();
+            HideOptions();
+        }
+
+        currentOption = null; // 重置当前选项
+    }
+
+    // 获得卡牌处理
+    private void GainCard(string cardId)
+    {
+        if (CardManager.Instance != null)
+        {
+            CardManager.Instance.GetNewCard(cardId);
+            Debug.Log($"获得新卡牌: {cardId}");
+            OnCardGained?.Invoke(cardId);
+        }
+        else
+        {
+            Debug.LogError("CardManager实例未找到，无法获得卡牌");
         }
     }
 
@@ -439,8 +516,6 @@ public class DialogueManager : MonoBehaviour
     {
         if (!HasValidUI()) return;
         currentSceneUI.Panel_Options?.SetActive(false);
-        currentSceneUI.Button_Option1?.onClick.RemoveAllListeners();
-        currentSceneUI.Button_Option2?.onClick.RemoveAllListeners();
     }
     #endregion
 
@@ -524,7 +599,9 @@ public class DialogueManager : MonoBehaviour
         isTyping = false;
         OnTypingStateChanged?.Invoke(false);
 
-        if (currentSceneUI.DialoguePanel_Main.activeSelf)
+        if (currentSceneUI.DialoguePanel_Narration.activeSelf)
+            currentSceneUI.Text_Narration.text = currentData.Text;
+        else if (currentSceneUI.DialoguePanel_Main.activeSelf)
             currentSceneUI.Text_MainDialogue.text = currentData.Text;
         else if (currentSceneUI.DialoguePanel_Minor.activeSelf)
             currentSceneUI.Text_MinorDialogue.text = currentData.Text;

@@ -10,21 +10,23 @@ using TMPro;
 /// </summary>
 public class SceneDialogueUI : MonoBehaviour
 {
-    [Header("【主面板】重要角色/旁白共用")]
+    [Header("旁白")]
+    public GameObject DialoguePanel_Narration;
+    public TMP_Text Text_Narration;
+
+    [Header("主要角色对话框")]
     public GameObject DialoguePanel_Main;
     public Image Image_MainPortrait;
-    public GameObject Panel_MainName;
     public TMP_Text Text_MainName;
     public TMP_Text Text_MainDialogue;
 
-    [Header("【次要面板】次要角色专用")]
+    [Header("次要角色对话框")]
     public GameObject DialoguePanel_Minor;
     public Image Image_MinorAvatar;
-    public GameObject Panel_MinorName;
     public TMP_Text Text_MinorName;
     public TMP_Text Text_MinorDialogue;
 
-    [Header("【选项面板】")]
+    [Header("选项")]
     public GameObject Panel_Options;
     public Button Button_Option1;
     public TMP_Text Text_Option1;

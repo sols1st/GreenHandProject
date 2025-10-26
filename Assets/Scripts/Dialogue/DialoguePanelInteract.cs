@@ -38,7 +38,7 @@ public class DialoguePanelInteract : Interactable
         if (dialogueManager.currentSceneUI == null) return;
 
         //选项面板激活时，不响应对话框点击
-        if (dialogueManager.currentSceneUI.Panel_Options.activeSelf)
+        if (dialogueManager.currentSceneUI.Panel_Options != null &&dialogueManager.currentSceneUI.Panel_Options.activeSelf)
             return;
 
         if (dialogueManager.currentIndex >= dialogueManager.dialogueList.Count)

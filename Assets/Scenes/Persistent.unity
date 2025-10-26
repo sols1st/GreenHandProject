@@ -279,14 +279,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 501612409900884312, guid: 134591b7c539d254c933e1289359af09, type: 3}
-      propertyPath: avatarResPath
-      value: Dialogue/Avatars/
-      objectReference: {fileID: 0}
-    - target: {fileID: 501612409900884312, guid: 134591b7c539d254c933e1289359af09, type: 3}
-      propertyPath: portraitResPath
-      value: Dialogue/Portraits/
-      objectReference: {fileID: 0}
     - target: {fileID: 4633863725601945092, guid: 134591b7c539d254c933e1289359af09, type: 3}
       propertyPath: m_Name
       value: DialogueManager
