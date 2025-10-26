@@ -225,28 +225,26 @@ public class DialogueManager : MonoBehaviour
     {
         if (!HasValidUI()) return;
 
-        // 对话结束判断 - 检查索引越界或Next为"Ending"
-        if (currentIndex >= dialogueList.Count || dialogueList[currentIndex].Next == "Ending")
-        { 
-            Debug.Log("对话流程结束或到达结局！");
+        // 检查索引越界
+        if (currentIndex >= dialogueList.Count)
+        {
+            Debug.Log("对话列表已结束！");
             HideAllPanels();
             HideOptions();
-
-            // 调用场景加载器的结局处理方法
-            if (SceneLoader.Instance != null)
-            {
-                SceneLoader.Instance.HandleEnding();
-            }
-            else
-            {
-                Debug.LogError("SceneLoader实例未找到，无法处理结局");
-                // 备用方案：直接返回主菜单
-                UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
-            }
             return;
         }
 
         DialogueData currentData = dialogueList[currentIndex];
+
+        // 检查是否为结局
+        if (currentData.Next == "Ending")
+        {
+            Debug.Log("对话流程到达结局！");
+            HideAllPanels();
+            HideOptions();
+            SceneLoader.Instance.HandleEnding();
+        }
+
         string currentUiType = currentData.UI;
 
         // 重置状态：隐藏所有面板、选项，停止逐字协程
