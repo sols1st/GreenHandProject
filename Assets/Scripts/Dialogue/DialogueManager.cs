@@ -234,6 +234,7 @@ public class DialogueManager : MonoBehaviour
             return;
         }
         DialogueData currentData = dialogueList[currentIndex];
+
         if (currentData.Next == "Ending")
         {
             Debug.Log("对话流程到达结局！");
@@ -334,14 +335,14 @@ public class DialogueManager : MonoBehaviour
                 uiManager.HideAllPanels();
                 uiManager.HideOptions();
                 //触发结局大字报显示
-                if (CardManager.Instance != null)
-                {
-                    CardManager.Instance.ShowEnding();
-                }
-                else
-                {
-                    ContinueAfterBigPoster();
-                }
+                //if (CardManager.Instance != null)
+                //{
+                //    CardManager.Instance.ShowEnding();
+                //}
+                //else
+                //{
+                //    ContinueAfterBigPoster();
+                //}
                 break;
 
             default:
@@ -601,6 +602,8 @@ public class DialogueManager : MonoBehaviour
             uiManager.HideOptions();
             return;
         }
+
+        DialogueData nextData = dialogueList[currentIndex];
         ShowCurrentDialogue();
     }
 

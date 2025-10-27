@@ -9,7 +9,6 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class SceneLoader : MonoBehaviour
 {
-    // 单例实例，可以通过SceneLoader.Instance访问
     public static SceneLoader Instance;
 
     [Header("场景配置")]
@@ -18,15 +17,14 @@ public class SceneLoader : MonoBehaviour
 
     private void Awake()
     {
-        // 实现单例模式
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject); // 跨场景不销毁
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
-            Destroy(gameObject); // 如果已有实例，销毁重复的对象
+            Destroy(gameObject);
             return;
         }
     }
@@ -46,7 +44,6 @@ public class SceneLoader : MonoBehaviour
     public void StartGame()
     {
         Debug.Log("SceneLoader: 开始游戏，加载第一个场景");
-        // 卸载主菜单场景，加载DemoScene
         SceneManager.LoadScene(demoSceneIndex, LoadSceneMode.Single);
     }
 
@@ -57,8 +54,6 @@ public class SceneLoader : MonoBehaviour
     public void ReturnToMainMenu()
     {
         Debug.Log("SceneLoader: 返回主菜单");
-        // 获取当前活动场景
-        //Scene currentScene = SceneManager.GetActiveScene();
         SceneManager.LoadScene(mainMenuSceneIndex, LoadSceneMode.Single);
 
     }

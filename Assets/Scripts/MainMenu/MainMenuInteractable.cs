@@ -7,10 +7,20 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class MainMenuInteractable : Interactable
 {
+    public bool enableBackupClickDetection = true;//±¸ÓÃµã»÷¼ì²â
+    private void Update()
+    {
+        if (enableBackupClickDetection && Input.GetMouseButtonDown(0))
+        {
+            TriggerOnClick();
+        }
+    }
     public override void TriggerOnClick()
     {
         if (SceneLoader.Instance != null)
+        {
             SceneLoader.Instance.StartGame();
+        }
         else
         {
             SceneManager.LoadScene(2, LoadSceneMode.Single);

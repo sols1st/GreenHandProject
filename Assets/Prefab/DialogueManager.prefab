@@ -44,8 +44,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 562b8127bae5d8e4cb5b45678770ee4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainDialogueCSV: {fileID: 4900000, guid: 88e5030cf2dc973488eb3d73e0258595, type: 3}
-  inquiryDialogueCSV: {fileID: 4900000, guid: 567cfbc46089a024593ab3a9223be33c, type: 3}
+  mainDialogueCSV: {fileID: 4900000, guid: d24caeb245c6dd3418156ac6327ae8c3, type: 3}
+  inquiryDialogueCSV: {fileID: 4900000, guid: 202723ba277f23040be2581e49dd2f0d, type: 3}
   endingDialogueCSV: {fileID: 4900000, guid: aa60b56515015b3478000a49a9314de7, type: 3}
   typeSpeed: 0.05
   portraitResPath: Dialogue/Portraits/
@@ -53,4 +53,3 @@ MonoBehaviour:
   backgroundResPath: Background/
   dialogueList: []
   currentIndex: 0
-  isTyping: 0

@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3949225766263381746}
-  - component: {fileID: 6944764055606261287}
+  - component: {fileID: 7074102830169887869}
   m_Layer: 0
   m_Name: BootLoader
   m_TagString: Untagged
@@ -32,7 +32,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6944764055606261287
+--- !u!114 &7074102830169887869
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -41,7 +41,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2502501567183900758}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 78daabe03db721a47a1ffc879bc749bb, type: 3}
+  m_Script: {fileID: 11500000, guid: 79b27056927e49d45b69fc670361a6a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   firstSceneIndex: 1

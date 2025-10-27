@@ -56,23 +56,8 @@ public class BootLoader : MonoBehaviour
     /// </summary>
     private void LoadFirstScene()
     {
-        //if (string.IsNullOrEmpty(firstSceneName))
-        //{
-        //    Debug.LogError("BootLoader: 第一个场景名称未设置！");
-        //    return;
-        //}
-        //// 检查是否已经加载了目标场景（热重载等情况）
-        //if (IsSceneAlreadyLoaded(firstSceneName))
-        //{
-        //    Debug.Log($"BootLoader: 场景 '{firstSceneName}' 已经加载，无需重复加载。");
-        //    return;
-        //}
-        //// 注册场景加载完成回调
-        //UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnFirstSceneLoaded;
-
-        //// 使用叠加模式加载场景，保持Persistent场景
-        //UnityEngine.SceneManagement.SceneManager.LoadScene(firstSceneName, LoadSceneMode.Additive);
         SceneManager.LoadScene(firstSceneIndex, LoadSceneMode.Additive);
+        SceneManager.sceneLoaded += OnFirstSceneLoaded;
     }
 
     /// <summary>
@@ -80,15 +65,6 @@ public class BootLoader : MonoBehaviour
     /// </summary>
     private void OnFirstSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        //if (scene.name == firstSceneName)
-        //{
-        //    Debug.Log($"BootLoader: 场景 '{firstSceneName}' 加载完成。");
-        //    // 注销回调，避免重复调用
-        //    UnityEngine.SceneManagement.SceneManager.sceneLoaded -= OnFirstSceneLoaded;
-        //}
-        //// 设置新加载的场景为活动场景
-        //UnityEngine.SceneManagement.SceneManager.SetActiveScene(scene);
-
         Debug.Log($"BootLoader: 场景索引 '{firstSceneIndex}' 加载完成。");
         SceneManager.sceneLoaded -= OnFirstSceneLoaded;
         SceneManager.SetActiveScene(scene);

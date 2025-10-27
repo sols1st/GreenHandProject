@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 210896517791447139}
   - component: {fileID: 2105600198306719113}
   - component: {fileID: 7894762905318823697}
-  - component: {fileID: 2584823722840559452}
+  - component: {fileID: 5990171879153285016}
   m_Layer: 5
   m_Name: MainMenuCanvas
   m_TagString: Untagged
@@ -62,7 +62,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 10
   m_TargetDisplay: 0
 --- !u!114 &2493597525861206846
 MonoBehaviour:
@@ -142,7 +142,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &2584823722840559452
+--- !u!114 &5990171879153285016
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -155,3 +155,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isInteractable: 1
+  isHover: 1
+  enableBackupClickDetection: 1

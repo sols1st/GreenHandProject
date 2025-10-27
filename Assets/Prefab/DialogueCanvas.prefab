@@ -220,7 +220,7 @@ GameObject:
   - component: {fileID: 1691835083382446485}
   - component: {fileID: 3258961887403771273}
   - component: {fileID: 2367899611472354521}
-  - component: {fileID: 8262774866748274479}
+  - component: {fileID: 1288467516413506935}
   m_Layer: 7
   m_Name: DialoguePanel_Minor
   m_TagString: Untagged
@@ -271,7 +271,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.79607844}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -288,7 +288,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &8262774866748274479
+--- !u!114 &1288467516413506935
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -301,6 +301,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isInteractable: 1
+  isHover: 0
 --- !u!1 &1207360961424339976
 GameObject:
   m_ObjectHideFlags: 0
@@ -447,7 +448,7 @@ GameObject:
   - component: {fileID: 2312421229031571770}
   - component: {fileID: 5651181102331856368}
   - component: {fileID: 8043266280686360265}
-  - component: {fileID: 2043579279445416097}
+  - component: {fileID: 6814875578379257043}
   m_Layer: 7
   m_Name: Button_Option2
   m_TagString: Untagged
@@ -557,7 +558,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &2043579279445416097
+--- !u!114 &6814875578379257043
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -570,6 +571,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isInteractable: 1
+  isHover: 0
 --- !u!1 &2452134785350737621
 GameObject:
   m_ObjectHideFlags: 0
@@ -850,7 +852,7 @@ GameObject:
   - component: {fileID: 4366713720453678011}
   - component: {fileID: 958422286213152968}
   - component: {fileID: 4256509923395751803}
-  - component: {fileID: 8574860375723841218}
+  - component: {fileID: 4517250054617842111}
   m_Layer: 7
   m_Name: Button_Option1
   m_TagString: Untagged
@@ -960,7 +962,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &8574860375723841218
+--- !u!114 &4517250054617842111
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -973,6 +975,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isInteractable: 1
+  isHover: 0
 --- !u!1 &3794175651175095309
 GameObject:
   m_ObjectHideFlags: 0
@@ -1032,7 +1035,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.79607844}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.8392157}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1403,7 +1406,7 @@ GameObject:
   - component: {fileID: 7646548343870699347}
   - component: {fileID: 734760269926964514}
   - component: {fileID: 1292731877810401417}
-  - component: {fileID: 5588267578783222571}
+  - component: {fileID: 1409689203752210797}
   m_Layer: 7
   m_Name: DialoguePanel_Main
   m_TagString: Untagged
@@ -1471,7 +1474,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &5588267578783222571
+--- !u!114 &1409689203752210797
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1484,6 +1487,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isInteractable: 1
+  isHover: 0
 --- !u!1 &6420609537732035004
 GameObject:
   m_ObjectHideFlags: 0
@@ -1744,6 +1748,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isInteractable: 1
+  isHover: 0
 --- !u!1 &8422724828377941425
 GameObject:
   m_ObjectHideFlags: 0
@@ -1755,7 +1760,7 @@ GameObject:
   - component: {fileID: 3787265556733202734}
   - component: {fileID: 3103008241266817104}
   - component: {fileID: 6889877848342693722}
-  - component: {fileID: 845329504253566059}
+  - component: {fileID: 7767153745928325627}
   m_Layer: 7
   m_Name: DialoguePanel_Narration
   m_TagString: Untagged
@@ -1821,7 +1826,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &845329504253566059
+--- !u!114 &7767153745928325627
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1834,6 +1839,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isInteractable: 1
+  isHover: 0
 --- !u!1 &8555842842423488672
 GameObject:
   m_ObjectHideFlags: 0
@@ -1846,8 +1852,8 @@ GameObject:
   - component: {fileID: 3595038407788232590}
   - component: {fileID: 3727484700698964922}
   - component: {fileID: 183102457953221479}
-  - component: {fileID: 3289317225366310496}
   - component: {fileID: 2932331407302460302}
+  - component: {fileID: 2135239068172329183}
   m_Layer: 7
   m_Name: DialogueCanvas
   m_TagString: Untagged
@@ -1942,7 +1948,15 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 0
---- !u!114 &3289317225366310496
+--- !u!222 &2932331407302460302
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8555842842423488672}
+  m_CullTransparentMesh: 1
+--- !u!114 &2135239068172329183
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1951,7 +1965,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8555842842423488672}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c8e632ef548bfdf4bb5d646c474a8b1e, type: 3}
+  m_Script: {fileID: 11500000, guid: bf0dc90980ffe1146a17fa4b782c20bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   DialoguePanel_Narration: {fileID: 8422724828377941425}
@@ -1970,11 +1984,3 @@ MonoBehaviour:
   Button_Option2: {fileID: 8043266280686360265}
   Text_Option2: {fileID: 3467839985611919017}
   BackgroundImage: {fileID: 5818587215967905026}
---- !u!222 &2932331407302460302
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8555842842423488672}
-  m_CullTransparentMesh: 1
