@@ -49,6 +49,7 @@ public class CursorManager : MonoBehaviour
     private bool isCursorEnabled = false;
     private CursorType lastDirectionType = CursorType.Default; // 默认应该是Default，不是Right
     private InputSystem _inputSystem;
+    private string lastInteractableName = ""; // 存储上一帧检测到的可交互物体名称
 
     public static CursorManager Instance { get; private set; }
 
@@ -103,8 +104,9 @@ public class CursorManager : MonoBehaviour
     private void HandleInteractableDetection()
     {
         // 检测鼠标下的可交互物体
-        GameObject interactableGameObject = GetInteractable();
-        bool hasInteractable = false;
+        var interactableGameObject = GetInteractable();
+        var hasInteractable = false;
+        string currentInteractableName = "";
 
         if (interactableGameObject != null)
         {
@@ -112,14 +114,26 @@ public class CursorManager : MonoBehaviour
             if (interactable != null && interactable.isInteractable && interactable.isHover)
             {
                 hasInteractable = true;
+                currentInteractableName = interactableGameObject.name;
+
+                // 只有当前物体名称与上一帧不同时才播放音效
+                if (currentInteractableName != lastInteractableName)
+                {
+                    AudioManager.Instance.PlaySoundEffect("V002");
+                }
                 HandleOnInteractableHover();
             }
         }
 
+        // 如果没有可交互物体，将名称置空
         if (!hasInteractable)
         {
+            currentInteractableName = "";
             HandleOnNoInteractable();
         }
+
+        // 更新上一帧的物体名称
+        lastInteractableName = currentInteractableName;
 
         // 只有在启用自定义光标时才更新光标
         if (isCursorEnabled)
@@ -133,9 +147,7 @@ public class CursorManager : MonoBehaviour
     /// </summary>
     private void HandleOnInteractableHover()
     {
-        // TODO: 在这里添加音效播放逻辑
-        // AudioManager.Instance.PlayHoverSound();
-
+        
         // 更新状态
         if (!isCursorEnabled) return;
         SetHoverCursor();
@@ -211,7 +223,13 @@ public class CursorManager : MonoBehaviour
     {
         var interactableGameObject = GetInteractable();
         if (interactableGameObject == null) return;
+        if (interactableGameObject.layer != LayerMask.NameToLayer("Dialogue") &&
+            interactableGameObject.layer != LayerMask.NameToLayer("NewCard"))
+        {
+            AudioManager.Instance.PlaySoundEffect("V001");
+        }
         var interactable = interactableGameObject.GetComponent<Interactable>();
+        
         if (interactable != null && interactable.isInteractable)
         {
             interactable.TriggerOnClick();
