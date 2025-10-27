@@ -1284,7 +1284,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isInteractable: 1
-  isHover: 0
+  isHover: 1
   cardName: CN01
 --- !u!1 &1914817913
 GameObject:
