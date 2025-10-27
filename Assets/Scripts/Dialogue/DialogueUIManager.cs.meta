@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Scripts/testDialogue.cs.meta
+guid: 5f9fefce2f2b246a2aefc99802a190d4
+========
+guid: e6ab95f281ffc2b45bd4605072bb4af1
+>>>>>>>> Wanwan:Assets/Scripts/Dialogue/DialogueUIManager.cs.meta
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

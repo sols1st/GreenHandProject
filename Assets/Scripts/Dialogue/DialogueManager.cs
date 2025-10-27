@@ -5,9 +5,10 @@ using UnityEngine.UI;
 using System.IO;
 using TMPro;
 using System;
+using System.Net;
 
 [System.Serializable]
-public class DialogueData
+public class DialogueData 
 {
     public string Process;
     public string Scene;
@@ -17,89 +18,133 @@ public class DialogueData
     public string UI;
     public string Choice;
     public string Next;
-    public string Card;
+}
+
+public class OptionData
+{
+    public string OptionText;
+    public string TargetProcess;
+    public string RequireCard;
+    public string GainedCard;
+
+    public bool RequiresCard => !string.IsNullOrEmpty(RequireCard);
+    public bool GrantsCard => !string.IsNullOrEmpty(GainedCard);
 }
 
 public class DialogueManager : MonoBehaviour
 {
-    // UI组件引用
-    [Header("【主面板】重要角色/旁白共用")]
-    public GameObject DialoguePanel_Main; // 主对话面板
-    public Image Image_MainPortrait;  // 重要角色立绘
-    public GameObject Panel_MainName;  // 重要角色名称面板
-    public TMP_Text Text_MainName;   // 重要角色名称文本
-    public TMP_Text Text_MainDialogue;  // 主对话文本
+    // 单例实例
+    public static DialogueManager Instance;
 
-    [Header("【次要面板】次要角色专用")]
-    public GameObject DialoguePanel_Minor; // 次要对话面板
-    public Image Image_MinorAvatar;  // 次要角色头像
-    public GameObject Panel_MinorName;   // 次要角色名称面板
-    public TMP_Text Text_MinorName;  // 次要角色名称文本
-    public TMP_Text Text_MinorDialogue; // 次要对话文本
-
-    [Header("【选项面板】带选项时显示")]
-    public GameObject Panel_Options;
-    public Button Button_Option1;
-    public TMP_Text Text_Option1;
-    public Button Button_Option2;
-    public TMP_Text Text_Option2;
-
-    [Header("【背景】显示背景精灵图")]
-    public GameObject BackgroundGameObject; // 用于显示背景的游戏对象
+    [Header("【对话CSV文件】")]
+    public TextAsset mainDialogueCSV; // 主线对话CSV
+    public TextAsset inquiryDialogueCSV; // 探索问询CSV
+    public TextAsset endingDialogueCSV; // 结局对话CSV
 
     [Header("【配置项】")]
-    public TextAsset dialogueCsv;   // 对话CSV文件
-    public float typeSpeed = 0.05f;  // 逐字显示速度
+    public float typeSpeed = 0.05f; // 逐字显示速度
     public string portraitResPath = "Portraits/"; // 重要角色立绘资源路径
     public string avatarResPath = "Avatars/";   // 次要角色头像资源路径
     public string backgroundResPath = "Background/"; // 背景资源路径
 
+    internal SceneDialogueUI currentSceneUI; // 当前场景的UI控制器
+
     public List<DialogueData> dialogueList = new List<DialogueData>(); // 对话数据列表
     public int currentIndex = 0;  // 当前对话索引
-    public Coroutine typingCoroutine;  // 逐字显示协程
-    public bool isTyping = false;   // 是否正在逐字显示
 
+    public event Action<bool> OnTypingStateChanged;
 
-    // 加载CSV + 显示首条对话
-    void Start()
+    private OptionData currentOption;//当前选项数据
+    private List<OptionData> activeOptions = new List<OptionData>();//激活的选项
+
+    public event Action<string> OnCardGained;//获得卡牌事件
+    private DialogueUIManager uiManager;
+    private TextDisplayController textDisplayController;
+
+    private void Awake()
     {
-        // 初始隐藏所有面板和选项
-        HideAllPanels();
-        HideOptions();
-
-        // 加载CSV数据
-        if (dialogueCsv != null)
+        // 单例模式
+        if (Instance == null)
         {
-            LoadCsvData();
-            if (dialogueList.Count > 0)
-            {
-                ShowCurrentDialogue(); // 显示第一条对话
-            }
-            else
-            {
-                Debug.LogError("CSV数据为空，请检查文件内容！");
-            }
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+            textDisplayController = new TextDisplayController(this);
         }
         else
         {
-            Debug.LogError("未赋值对话CSV文件，请在Inspector中拖入！");
+            Destroy(gameObject);
+        }
+        textDisplayController.OnTypingStateChanged += (typing) =>
+        {
+            OnTypingStateChanged?.Invoke(typing);
+        };
+    }
+
+    /// <summary>注册当前场景的UI组件</summary>
+    public void RegisterSceneUI(SceneDialogueUI sceneUI)
+    {
+        currentSceneUI = sceneUI;
+        uiManager = new DialogueUIManager(sceneUI);
+        // 如果有等待中的对话，立即显示
+        if (dialogueList.Count > 0 && currentIndex < dialogueList.Count)
+        {
+            ShowCurrentDialogue();
         }
     }
 
+    /// <summary>注销当前场景的UI组件</summary>
+    public void UnregisterSceneUI()
+    {
+        if (currentSceneUI != null)
+        {
+            currentSceneUI = null;
+            uiManager = null;
+        }
+        textDisplayController.StopCurrentTyping();
+    }
 
-    // 加载CSV数据
-    private void LoadCsvData()
+    /// <summary>检查当前是否有有效的UI引用</summary>
+    private bool HasValidUI()
+    {
+        if (currentSceneUI == null)
+        {
+            return false;
+        }
+        return true;
+    }
+
+    /// <summary>加载CSV + 显示首条对话</summary>
+    void Start()
+    {
+        if (Instance != this) return;
+
+        // 加载主线对话CSV
+        if (mainDialogueCSV != null)
+        {
+            LoadDialogueData(mainDialogueCSV);
+        }
+        else
+        {
+            Debug.LogError("主线对话CSV文件未分配");
+        }
+    }
+
+    /// <summary>加载CSV数据</summary>
+    /// <param name="csvFile">要加载的CSV文件</param>
+    private void LoadCsvData(TextAsset csvFile)
     {
         dialogueList.Clear();
-        StringReader reader = new StringReader(dialogueCsv.text);
+        string csvText = csvFile.text;
+
+        // 处理UTF-8 BOM字符
+        if (csvText.Length > 0 && csvText[0] == '\uFEFF')
+        {
+            csvText = csvText.Substring(1);
+        }
+        StringReader reader = new StringReader(csvFile.text);
 
         // 跳过表头
         string headerLine = reader.ReadLine();
-        if (string.IsNullOrEmpty(headerLine))
-        {
-            Debug.LogError("CSV表头为空，格式错误！");
-            return;
-        }
 
         // 逐行读取对话数据
         while (reader.Peek() != -1)
@@ -109,10 +154,18 @@ public class DialogueManager : MonoBehaviour
                 continue; // 跳过空行和注释行
 
             string[] dataParts = dataLine.Split(',');
-            if (dataParts.Length != 9)
+
+            if (dataParts.Length < 8)
             {
-                Debug.LogWarning($"CSV行格式错误：行内容「{dataLine}」，字段数{dataParts.Length}（需9个）");
-                continue;
+                string[] newDataParts = new string[8];
+                for (int i = 0; i < 8; i++)
+                {
+                    if (i < dataParts.Length)
+                        newDataParts[i] = dataParts[i].Trim();
+                    else
+                        newDataParts[i] = "";
+                }
+                dataParts = newDataParts;
             }
 
             // 解析并存储对话数据
@@ -125,79 +178,170 @@ public class DialogueManager : MonoBehaviour
                 Text = dataParts[4].Trim(),
                 UI = dataParts[5].Trim(),
                 Choice = dataParts[6].Trim(),
-                Next = dataParts[7].Trim(),
-                Card = dataParts[8].Trim()
+                Next = dataParts[7].Trim()
             };
             dialogueList.Add(newData);
         }
-        reader.Close();
-        Debug.Log($"CSV加载成功，共{dialogueList.Count}条对话数据");
+        //reader.Close();
     }
 
-
-    // 显示当前对话
-    public void ShowCurrentDialogue()
+    /// <summary>加载指定的CSV文件数据</summary>
+    /// <param name="csvFile">要加载的CSV文件</param>
+    public void LoadDialogueData(TextAsset csvFile)
     {
-        // 对话结束判断
-        if (currentIndex >= dialogueList.Count)
+        if (csvFile == null)
         {
-            Debug.Log("对话流程结束！");
-            HideAllPanels();
-            HideOptions();
+            Debug.LogError("传入的CSV文件为空，无法加载对话数据！");
             return;
         }
 
+        currentIndex = 0;
+        LoadCsvData(csvFile);
+        ShowCurrentDialogue();
+    }
+
+    /// <summary>切换到主线对话</summary>
+    public void SwitchToMainDialogue()
+    {
+        LoadDialogueData(mainDialogueCSV);
+    }
+
+    /// <summary>切换到问询对话</summary>
+    public void SwitchToInquiryDialogue()
+    {
+        LoadDialogueData(inquiryDialogueCSV);
+    }
+
+    /// <summary>切换到结局对话</summary>
+    public void SwitchToEndingDialogue()
+    {
+        LoadDialogueData(endingDialogueCSV);
+    }
+
+
+    /// <summary>
+    /// 显示当前对话
+    /// </summary>
+    public void ShowCurrentDialogue()
+    {
+        if (!HasValidUI()) return;
+
+        if (currentIndex >= dialogueList.Count)
+        {
+            Debug.Log("对话列表已结束！");
+            uiManager.HideAllPanels();
+            uiManager.HideOptions();
+            return;
+        }
         DialogueData currentData = dialogueList[currentIndex];
+        if (currentData.Next == "Ending")
+        {
+            Debug.Log("对话流程到达结局！");
+        }
         string currentUiType = currentData.UI;
 
         // 重置状态：隐藏所有面板、选项，停止逐字协程
-        HideAllPanels();
-        HideOptions();
-        if (typingCoroutine != null)
-        {
-            StopCoroutine(typingCoroutine);
-            typingCoroutine = null;
-        }
-        isTyping = false;
+        uiManager.HideAllPanels();
+        uiManager.HideOptions();
+        textDisplayController.StopCurrentTyping();
 
         // 根据UI类型（U001-U004）切换面板
         switch (currentUiType)
         {
-            case "U001": // 旁白：仅主面板，无角色立绘/名称
-                ShowMainPanel(showPortrait: false, showName: false);
-                ShowDialogueText(Text_MainDialogue, currentData.Text);
+            case "U001": // 旁白
+                uiManager.ShowNarrationPanel();
+                textDisplayController.StartTypingEffect(currentSceneUI.Text_Narration, currentData.Text, typeSpeed);
                 break;
 
-            case "U002": // 重要角色：主面板+立绘+名称
-                ShowMainPanel(showPortrait: true, showName: true);
-                Text_MainName.text = currentData.Character_Name;
-                LoadSpriteToImage(Image_MainPortrait, portraitResPath + currentData.Character);
-                ShowDialogueText(Text_MainDialogue, currentData.Text);
-                break;
-
-            case "U003": // 次要角色：次要面板+头像+名称
-                ShowMinorPanel(showAvatar: true, showName: true);
-                Text_MinorName.text = currentData.Character_Name;
-                LoadSpriteToImage(Image_MinorAvatar, avatarResPath + currentData.Character);
-                ShowDialogueText(Text_MinorDialogue, currentData.Text);
-                break;
-
-            case "U004": // 带选项：当前角色面板+选项
-                if (IsImportantCharacter(currentData.Character))
+            case "U002": // 主要角色：主面板+立绘+名称
+                uiManager.ShowMainPanel(showPortrait: true, showName: true);
+                currentSceneUI.Text_MainName.text = currentData.Character_Name;
+                if (!string.IsNullOrEmpty(currentData.Character))
                 {
-                    ShowMainPanel(showPortrait: true, showName: true);
-                    Text_MainName.text = currentData.Character_Name;
-                    LoadSpriteToImage(Image_MainPortrait, portraitResPath + currentData.Character);
-                    ShowDialogueText(Text_MainDialogue, currentData.Text);
+                    string portraitPath = portraitResPath + currentData.Character;
+                    Sprite portraitSprite = Resources.Load<Sprite>(portraitPath);
+
+                    if (portraitSprite != null)
+                    {
+                        currentSceneUI.Image_MainPortrait.sprite = portraitSprite;
+                        currentSceneUI.Image_MainPortrait.gameObject.SetActive(true);
+                    }
+                    else
+                    {
+                        // 没有立绘资源，隐藏立绘
+                        currentSceneUI.Image_MainPortrait.gameObject.SetActive(false);
+                    }
                 }
                 else
                 {
-                    ShowMinorPanel(showAvatar: true, showName: true);
-                    Text_MinorName.text = currentData.Character_Name;
-                    LoadSpriteToImage(Image_MinorAvatar, avatarResPath + currentData.Character);
-                    ShowDialogueText(Text_MinorDialogue, currentData.Text);
+                    // Character字段为空，隐藏立绘
+                    currentSceneUI.Image_MainPortrait.gameObject.SetActive(false);
                 }
-                ShowOptions(currentData.Choice);
+                textDisplayController.StartTypingEffect(currentSceneUI.Text_MainDialogue, currentData.Text, typeSpeed);
+                break;
+
+            case "U003": // 次要角色：次要面板+头像+名称
+                uiManager.ShowMinorPanel(showAvatar: true, showName: true);
+                currentSceneUI.Text_MinorName.text = currentData.Character_Name;
+                if (!string.IsNullOrEmpty(currentData.Character))
+                {
+                    string avatarPath = avatarResPath + currentData.Character;
+                    Sprite avatarSprite = Resources.Load<Sprite>(avatarPath);
+
+                    if (avatarSprite != null)
+                    {
+                        currentSceneUI.Image_MinorAvatar.sprite = avatarSprite;
+                        currentSceneUI.Image_MinorAvatar.gameObject.SetActive(true);
+                    }
+                    else
+                    {
+                        // 没有头像资源，隐藏头像
+                        currentSceneUI.Image_MinorAvatar.gameObject.SetActive(false);
+                    }
+                }
+                else
+                {
+                    // Character字段为空，隐藏头像
+                    currentSceneUI.Image_MinorAvatar.gameObject.SetActive(false);
+                }
+                textDisplayController.StartTypingEffect(currentSceneUI.Text_MinorDialogue, currentData.Text, typeSpeed);
+                break;
+
+            case "U004": // 带选项：当前面板+选项
+                if (string.IsNullOrEmpty(currentData.Character) && string.IsNullOrEmpty(currentData.Character_Name))
+                {
+                    uiManager.ShowNarrationPanel();
+                    textDisplayController.StartTypingEffect(currentSceneUI.Text_Narration, currentData.Text, typeSpeed);
+                }
+                else if (!string.IsNullOrEmpty(currentData.Character) && IsImportantCharacter(currentData.Character))
+                {
+                    uiManager.ShowMainPanel(showPortrait: true, showName: true);
+                    currentSceneUI.Text_MainName.text = currentData.Character_Name;
+                    LoadSpriteToImage(currentSceneUI.Image_MainPortrait, portraitResPath + currentData.Character);
+                    textDisplayController.StartTypingEffect(currentSceneUI.Text_MainDialogue, currentData.Text, typeSpeed);
+                }
+                else
+                {
+                    uiManager.ShowMinorPanel(showAvatar: true, showName: true);
+                    currentSceneUI.Text_MinorName.text = currentData.Character_Name;
+                    LoadSpriteToImage(currentSceneUI.Image_MinorAvatar, avatarResPath + currentData.Character);
+                    textDisplayController.StartTypingEffect(currentSceneUI.Text_MinorDialogue, currentData.Text, typeSpeed);
+                }
+                uiManager.ShowOptions(currentData.Choice);
+                break;
+
+            case "U005"://大字报触发节点
+                uiManager.HideAllPanels();
+                uiManager.HideOptions();
+                //触发结局大字报显示
+                if (CardManager.Instance != null)
+                {
+                    CardManager.Instance.ShowEnding();
+                }
+                else
+                {
+                    ContinueAfterBigPoster();
+                }
                 break;
 
             default:
@@ -209,117 +353,14 @@ public class DialogueManager : MonoBehaviour
         ChangeBackground(currentData.Scene);
     }
 
-
-    // UI控制方法
-    #region UI控制
-    // 显示主面板（控制立绘、名称显隐）
-    private void ShowMainPanel(bool showPortrait, bool showName)
+    /// <summary>
+    /// 跳过逐字显示
+    /// </summary>
+    public void SkipTyping(DialogueData currentData)
     {
-        if (DialoguePanel_Main != null)
-        {
-            DialoguePanel_Main.SetActive(true);
-            Image_MainPortrait?.gameObject.SetActive(showPortrait);
-            Panel_MainName?.SetActive(showName);
-            Text_MainName?.gameObject.SetActive(showName);
-        }
-        else
-        {
-            Debug.LogError("主对话面板（DialoguePanel_Main）未赋值！");
-        }
+        textDisplayController.SkipTyping();
     }
 
-    // 显示次要面板（控制头像、名称显隐）
-    private void ShowMinorPanel(bool showAvatar, bool showName)
-    {
-        if (DialoguePanel_Minor != null)
-        {
-            DialoguePanel_Minor.SetActive(true);
-            Image_MinorAvatar?.gameObject.SetActive(showAvatar);
-            Panel_MinorName?.SetActive(showName);
-            Text_MinorName?.gameObject.SetActive(showName);
-        }
-        else
-        {
-            Debug.LogError("次要对话面板（DialoguePanel_Minor）未赋值！");
-        }
-    }
-
-    // 隐藏所有对话面板
-    private void HideAllPanels()
-    {
-        DialoguePanel_Main?.SetActive(false);
-        DialoguePanel_Minor?.SetActive(false);
-    }
-
-    // 显示选项
-    private void ShowOptions(string choiceStr)
-    {
-        if (string.IsNullOrEmpty(choiceStr) || Panel_Options == null)
-        {
-            HideOptions();
-            return;
-        }
-
-        Panel_Options.SetActive(true);
-        string[] optionParts = choiceStr.Split(';');
-
-        // 处理选项1
-        if (optionParts.Length >= 1 && Button_Option1 != null && Text_Option1 != null)
-        {
-            string[] opt1 = optionParts[0].Split(':');
-            if (opt1.Length == 2)
-            {
-                Text_Option1.text = opt1[0];
-                string targetProcess = opt1[1];
-                OptionButtonInteract interact1 = Button_Option1.GetComponent<OptionButtonInteract>();
-                if (interact1 != null)
-                {
-                    interact1.SetTargetProcess(targetProcess);
-                }
-                Button_Option1.onClick.RemoveAllListeners();
-                Button_Option1.gameObject.SetActive(true);
-            }
-            else
-            {
-                Button_Option1.gameObject.SetActive(false);
-                Debug.LogWarning($"选项1格式错误：{optionParts[0]}（需「文本:进程」格式）");
-            }
-        }
-
-        // 处理选项2
-        if (optionParts.Length >= 2 && Button_Option2 != null && Text_Option2 != null)
-        {
-            string[] opt2 = optionParts[1].Split(':');
-            if (opt2.Length == 2)
-            {
-                Text_Option2.text = opt2[0];
-                string targetProcess = opt2[1];
-                OptionButtonInteract interact2 = Button_Option2.GetComponent<OptionButtonInteract>();
-                if (interact2 != null)
-                {
-                    interact2.SetTargetProcess(targetProcess);
-                }
-                Button_Option2.onClick.RemoveAllListeners();
-                Button_Option2.gameObject.SetActive(true);
-            }
-            else
-            {
-                Button_Option2.gameObject.SetActive(false);
-                Debug.LogWarning($"选项2格式错误：{optionParts[1]}（需「文本:进程」格式）");
-            }
-        }
-    }
-
-    // 隐藏选项
-    private void HideOptions()
-    {
-        Panel_Options?.SetActive(false);
-        Button_Option1?.onClick.RemoveAllListeners();
-        Button_Option2?.onClick.RemoveAllListeners();
-    }
-    #endregion
-
-    // 选项按钮点击：跳转到目标进程
     public void OnOptionClicked(string targetProcess)
     {
         if (string.IsNullOrEmpty(targetProcess))
@@ -328,7 +369,7 @@ public class DialogueManager : MonoBehaviour
             return;
         }
 
-        HideOptions();
+        uiManager.HideOptions();
 
         // 查找目标进程的索引
         for (int i = 0; i < dialogueList.Count; i++)
@@ -346,86 +387,143 @@ public class DialogueManager : MonoBehaviour
         ShowCurrentDialogue();
     }
 
-    // 文本控制：逐字显示
-    #region 文本控制
-    // 启动逐字显示
-    private void ShowDialogueText(TMP_Text targetText, string textContent)
+    /// <summary>
+    /// 处理选项（不需要卡牌）
+    /// </summary>
+    public void ProcessOption(OptionData option)
     {
-        if (targetText == null)
+        uiManager?.HideOptions();
+
+        // 处理获得卡牌
+        if (!string.IsNullOrEmpty(option.GainedCard))
         {
-            Debug.LogError("目标文本组件（TMP_Text）未赋值！");
-            return;
+            GainCard(option.GainedCard);
         }
 
-        targetText.text = "";
-        if (typingCoroutine != null) StopCoroutine(typingCoroutine);
-        typingCoroutine = StartCoroutine(TypingCoroutine(targetText, textContent));
+        // 跳转到目标进程
+        OnOptionClicked(option.TargetProcess);
     }
 
-    //public void UpdateTypingState(bool typing)
-    //{
-    //    isTyping = typing;
-    //    // 找到对话框面板的交互脚本，更新状态
-    //    DialoguePanelInteract mainInteract = DialoguePanel_Main.GetComponent<DialoguePanelInteract>();
-    //    DialoguePanelInteract minorInteract = DialoguePanel_Minor.GetComponent<DialoguePanelInteract>();
-    //    mainInteract?.SetTypingState(typing);
-    //    minorInteract?.SetTypingState(typing);
-    //}
-
-    public event Action<bool> OnTypingStateChanged;
-
-    // 逐字显示协程
-    private IEnumerator TypingCoroutine(TMP_Text targetText, string textContent)
+    /// <summary>
+    /// 获得卡牌
+    /// </summary>
+    /// <param name="cardId"></param>
+    private void GainCard(string cardId)
     {
-        isTyping = true;
-        OnTypingStateChanged?.Invoke(true); //开始逐字
-        targetText.richText = true;
-        int currentPos = 0;
-
-        while (currentPos < textContent.Length)
+        if (CardManager.Instance != null)
         {
-            if (currentPos + 3 < textContent.Length && textContent.Substring(currentPos, 4) == "<br>")
-            {
-                targetText.text += "<br>";
-                currentPos += 4;
-            }
-            else
-            {
-                targetText.text += textContent[currentPos];
-                currentPos += 1;
-            }
-            yield return new WaitForSeconds(typeSpeed);
+            CardManager.Instance.GetNewCard(cardId);
+            Debug.Log($"获得新卡牌: {cardId}");
+            OnCardGained?.Invoke(cardId);
         }
-
-        isTyping = false;
-        OnTypingStateChanged?.Invoke(false);  //结束逐字
+        else
+        {
+            Debug.LogError("CardManager实例未找到，无法获得卡牌！");
+        }
     }
 
-    // 跳过逐字显示（直接显示完整文本）
-    public void SkipTyping(DialogueData currentData)
+    /// <summary>
+    /// 处理打开卡牌库选项（需要卡牌）
+    /// </summary>
+    public void OpenCardSelection(OptionData option)
     {
-        if (!isTyping || typingCoroutine == null) return;
+        uiManager?.HideOptions();
+        currentOption = option;
 
-        StopCoroutine(typingCoroutine);
-        typingCoroutine = null;
-        isTyping = false;
-        OnTypingStateChanged?.Invoke(false);
-
-        if (DialoguePanel_Main.activeSelf)
-            Text_MainDialogue.text = currentData.Text;
-        else if (DialoguePanel_Minor.activeSelf)
-            Text_MinorDialogue.text = currentData.Text;
+        // 打开卡牌库选择界面
+        //CardBagManager.Instance.Open("Dialogue");
     }
-    #endregion
 
-    // 判断是否为重要角色
+    /// <summary>
+    /// 判断是否为重要角色
+    /// </summary>
+    /// <param name="charId"></param>
+    /// <returns></returns>
     private bool IsImportantCharacter(string charId)
     {
         List<string> importantChars = new List<string> { "C001", "C002", "C003", "C004" };
         return importantChars.Contains(charId);
     }
 
-    // 加载Sprite到Image
+    /// <summary>
+    /// 启动指定NPC的问询对话
+    /// </summary>
+    /// /// <param name="npcId">NPC的Character ID，对应CSV中的Character字段</param>
+    public void StartNPCDialogue(string npcId)
+    {
+        SwitchToInquiryDialogue();
+        int npcDialogueIndex = FindNPCFirstDialogue(npcId);
+
+        if (npcDialogueIndex != -1)
+        {
+            currentIndex = npcDialogueIndex;
+            ShowCurrentDialogue();
+        }
+        else
+        {
+            Debug.LogWarning($"未找到NPC「{npcId}」的问询对话，请检查CSV文件！");
+        }
+    }
+
+    /// <summary>
+    /// 查找NPC的第一个对话进程
+    /// </summary>
+    private int FindNPCFirstDialogue(string npcId)
+    {
+        for (int i = 0; i < dialogueList.Count; i++)
+        {
+            if (dialogueList[i].Character == npcId)
+            {
+               return i;
+            }
+         }
+        return -1; // 未找到
+    }
+    private bool hasShownReasoningIntro = false;//是否已显示推理介绍
+
+    /// <summary>
+    /// 启动推理界面对话（自动判断是否是第一次）
+    /// </summary>
+    public void StartReasoningDialogue()
+    {
+        if (!hasShownReasoningIntro)
+        {
+            SwitchToMainDialogue();
+            int reasoningStartIndex = FindFirstProcessOfScene("S007");
+
+            if (reasoningStartIndex != -1)
+            {
+                currentIndex = reasoningStartIndex;
+                ShowCurrentDialogue();
+                hasShownReasoningIntro = true;//标记已显示过推理介绍
+            }
+            else
+            {
+                Debug.LogError("未找到S007场景的对话数据！");
+            }
+        }
+    }
+
+    /// <summary>
+    /// 查找指定场景的第一个进程
+    /// </summary>
+    private int FindFirstProcessOfScene(string sceneId)
+    {
+        for (int i = 0; i < dialogueList.Count; i++)
+        {
+            if (dialogueList[i].Scene == sceneId)
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /// <summary>
+    /// 加载Sprite到Image
+    /// </summary>
+    /// <param name="targetImage"></param>
+    /// <param name="spritePath"></param>
     private void LoadSpriteToImage(Image targetImage, string spritePath)
     {
         if (targetImage == null)
@@ -447,33 +545,205 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
-    // 切换背景
+    /// <summary>
+    /// 切换背景
+    /// </summary>
     private void ChangeBackground(string sceneId)
     {
-        if (BackgroundGameObject == null)
-        {
-            Debug.LogError("背景游戏对象（BackgroundGameObject）未赋值！");
-            return;
-        }
+        if (!HasValidUI()) return;
 
-        SpriteRenderer spriteRenderer = BackgroundGameObject.GetComponent<SpriteRenderer>();
-        if (spriteRenderer == null)
+        if (sceneId == "S005" || sceneId == "S001")
         {
-            Debug.LogError("背景游戏对象上没有SpriteRenderer组件！");
-            return;
-        }
+            string backgroundPath = backgroundResPath + sceneId;
+            Sprite backgroundSprite = Resources.Load<Sprite>(backgroundPath);
 
-        string backgroundPath = backgroundResPath + sceneId;
-        Sprite backgroundSprite = Resources.Load<Sprite>(backgroundPath);
-        if (backgroundSprite != null)
-        {
-            spriteRenderer.sprite = backgroundSprite;
-            BackgroundGameObject.SetActive(true);
+            if (backgroundSprite != null)
+            {
+                currentSceneUI.SetBackground(backgroundSprite);
+            }
+            else
+            {
+                Debug.LogWarning($"未找到背景Sprite：{backgroundPath}");
+                currentSceneUI.SetBackground(null); // 清空背景
+            }
         }
         else
         {
-            Debug.LogWarning($"未找到背景Sprite：{backgroundPath}，请检查Resources路径和文件名！");
-            BackgroundGameObject.SetActive(false);
+            currentSceneUI.SetBackground(null);
         }
+    }
+
+    /// <summary>
+    /// 处理对话继续
+    /// </summary>
+    public void ContinueDialogue()
+    {
+        if (textDisplayController.IsTyping)
+        {
+            textDisplayController.SkipTyping();
+            return;
+        }
+        DialogueData currentData = dialogueList[currentIndex];
+
+        if (currentData.Next == "Ending")
+        {
+            Debug.Log($"触发结局处理: {currentData.Process}");
+            // 延迟两秒后返回主菜单
+            StartCoroutine(DelayedEnding());
+            return;
+        }
+        currentIndex++;
+        // 检查索引是否越界
+        if (currentIndex >= dialogueList.Count)
+        {
+            Debug.Log("对话列表已结束！");
+            uiManager.HideAllPanels();
+            uiManager.HideOptions();
+            return;
+        }
+        ShowCurrentDialogue();
+    }
+
+    /// <summary>
+    /// 延迟处理结局
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator DelayedEnding()
+    {
+        uiManager.HideAllPanels();
+        uiManager.HideOptions();
+        yield return new WaitForSeconds(2.0f);
+        SceneLoader.Instance.HandleEnding();
+    }
+
+    /// <summary>
+    /// 大字报关闭后继续对话流程
+    /// </summary>
+    public void ContinueAfterBigPoster()
+    {
+        Debug.Log("大字报关闭，继续对话流程");
+        currentIndex++;
+
+        // 检查是否还有对话
+        if (currentIndex < dialogueList.Count)
+        {
+            ShowCurrentDialogue();
+        }
+        else
+        {
+            uiManager.HideAllPanels();
+            // 调用场景加载器的结局处理方法
+            if (SceneLoader.Instance != null)
+            {
+                SceneLoader.Instance.HandleEnding();
+            }
+            else
+            {
+                Debug.LogError("SceneLoader实例未找到，无法处理结局");
+            }
+        }
+    }
+
+    private void Update()
+    {
+        if (!HasValidUI()) return;
+
+        HandleShortcuts();
+    }
+
+    /// <summary>
+    /// 处理快捷键输入
+    /// </summary>
+    private void HandleShortcuts()
+    {
+        // 1. 空格键切换对话（同鼠标左键点击）
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            TriggerDialogueAdvance();
+        }
+
+        // 2. F1键直接跳转到当前对话的最后一个进程（测试用）
+        if (Input.GetKeyDown(KeyCode.F1))
+        {
+            JumpToLastProcess();
+        }
+
+        // 3. F2键切换直接测试问询对话
+        if (Input.GetKeyDown(KeyCode.F2))
+        {
+            TestInquiryDialogue();
+        }
+
+        // 4. F3键切换结局对话（测试用）
+        if (Input.GetKeyDown(KeyCode.F3))
+        {
+            TestEndingDialogue();
+        }
+    }
+
+    /// <summary>
+    /// 触发对话前进（同鼠标左键点击）
+    /// </summary>
+    private void TriggerDialogueAdvance()
+    {
+        // 检查选项面板是否激活，激活时不响应空格键
+        if (currentSceneUI.Panel_Options != null && currentSceneUI.Panel_Options.activeSelf)
+            return;
+
+        if (currentIndex >= dialogueList.Count)
+            return;
+
+        DialogueData currentData = dialogueList[currentIndex];
+        if (textDisplayController.IsTyping)
+        {
+            textDisplayController.SkipTyping();
+        }
+        else
+        {
+            ContinueDialogue();
+        }
+    }
+
+    /// <summary>
+    /// 跳转到最后一个进程（测试用）
+    /// </summary>
+    private void JumpToLastProcess()
+    {
+        if (dialogueList.Count == 0) return;
+
+        Debug.Log($"跳转到最后一个进程，原索引: {currentIndex} -> 新索引: {dialogueList.Count - 1}");
+
+        currentIndex = dialogueList.Count - 1;
+        ShowCurrentDialogue();
+    }
+
+    /// <summary>
+    /// 测试问询对话（直接按文件顺序）
+    /// </summary>
+    private void TestInquiryDialogue()
+    {
+        if (inquiryDialogueCSV == null)
+        {
+            Debug.LogWarning("问询对话CSV文件未分配！");
+            return;
+        }
+
+        Debug.Log("切换到问询对话（测试模式）");
+        SwitchToInquiryDialogue();
+    }
+
+    /// <summary>
+    /// 测试结局对话
+    /// </summary>
+    private void TestEndingDialogue()
+    {
+        if (endingDialogueCSV == null)
+        {
+            Debug.LogWarning("结局对话CSV文件未分配！");
+            return;
+        }
+
+        Debug.Log("切换到结局对话（测试模式）");
+        SwitchToEndingDialogue();
     }
 }

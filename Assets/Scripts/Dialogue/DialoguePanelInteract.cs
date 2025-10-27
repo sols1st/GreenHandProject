@@ -34,8 +34,11 @@ public class DialoguePanelInteract : Interactable
 
     public override void TriggerOnClick()
     {
+        // 检查UI是否有效
+        if (dialogueManager.currentSceneUI == null) return;
+
         //选项面板激活时，不响应对话框点击
-        if (dialogueManager.Panel_Options.activeSelf)
+        if (dialogueManager.currentSceneUI.Panel_Options != null &&dialogueManager.currentSceneUI.Panel_Options.activeSelf)
             return;
 
         if (dialogueManager.currentIndex >= dialogueManager.dialogueList.Count)
@@ -43,11 +46,10 @@ public class DialoguePanelInteract : Interactable
 
         DialogueData currentData = dialogueManager.dialogueList[dialogueManager.currentIndex];
         if (isTyping)
-            dialogueManager.SkipTyping(currentData); // 跳过逐字
+            dialogueManager.SkipTyping(currentData);  // 跳过逐字
         else
         {
-            dialogueManager.currentIndex++;
-            dialogueManager.ShowCurrentDialogue(); // 下一条对话
+            dialogueManager.ContinueDialogue();
         }
     }
 }

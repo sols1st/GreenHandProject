@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Resources/Audio.meta
 guid: a0b29ede37cfe4eaea4a962f04203ff5
+========
+guid: 13e95aed7acee8449b9f1146589a72c5
+>>>>>>>> Wanwan:Assets/Resources/CSV.meta
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}

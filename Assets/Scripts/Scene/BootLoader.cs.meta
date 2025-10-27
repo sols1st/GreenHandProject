@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Scripts/Audio/testBGM.cs.meta
+guid: d5debb7e48efe440f98c224191c62558
+========
+guid: 78daabe03db721a47a1ffc879bc749bb
+>>>>>>>> Wanwan:Assets/Scripts/Scene/BootLoader.cs.meta
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
