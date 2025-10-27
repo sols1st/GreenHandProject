@@ -46,11 +46,10 @@ public class DialoguePanelInteract : Interactable
 
         DialogueData currentData = dialogueManager.dialogueList[dialogueManager.currentIndex];
         if (isTyping)
-            dialogueManager.SkipTyping(currentData); // 跳过逐字
+            dialogueManager.SkipTyping(currentData);  // 跳过逐字
         else
         {
-            dialogueManager.currentIndex++;
-            dialogueManager.ShowCurrentDialogue(); // 下一条对话
+            dialogueManager.ContinueDialogue();
         }
     }
 }

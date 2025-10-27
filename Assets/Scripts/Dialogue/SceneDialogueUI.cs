@@ -33,7 +33,7 @@ public class SceneDialogueUI : MonoBehaviour
     public Button Button_Option2;
     public TMP_Text Text_Option2;
 
-    [Header("【背景】显示对话背景")]
+    [Header("对话背景")]
     public Image BackgroundImage;
 
     void Start()

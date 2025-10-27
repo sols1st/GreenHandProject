@@ -13,7 +13,7 @@ public class MainMenuInteractable : Interactable
             SceneLoader.Instance.StartGame();
         else
         {
-            UnityEngine.SceneManagement.SceneManager.LoadScene("DemoScene");
+            SceneManager.LoadScene(2, LoadSceneMode.Single);
         }
     }
 }

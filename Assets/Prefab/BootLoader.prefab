@@ -44,4 +44,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78daabe03db721a47a1ffc879bc749bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  firstSceneName: MainMenu
+  firstSceneIndex: 1

@@ -13,8 +13,8 @@ public class SceneLoader : MonoBehaviour
     public static SceneLoader Instance;
 
     [Header("场景配置")]
-    public string mainMenuScene = "MainMenu";
-    public string demoScene = "DemoScene";
+    public int mainMenuSceneIndex = 1;
+    public int demoSceneIndex = 2;
 
     private void Awake()
     {
@@ -47,7 +47,7 @@ public class SceneLoader : MonoBehaviour
     {
         Debug.Log("SceneLoader: 开始游戏，加载第一个场景");
         // 卸载主菜单场景，加载DemoScene
-        UnityEngine.SceneManagement.SceneManager.LoadScene(demoScene, LoadSceneMode.Single);
+        SceneManager.LoadScene(demoSceneIndex, LoadSceneMode.Single);
     }
 
     /// <summary>
@@ -58,11 +58,9 @@ public class SceneLoader : MonoBehaviour
     {
         Debug.Log("SceneLoader: 返回主菜单");
         // 获取当前活动场景
-        Scene currentScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
-        if (currentScene.name != mainMenuScene)
-        {
-            UnityEngine.SceneManagement.SceneManager.LoadScene(mainMenuScene, LoadSceneMode.Single);
-        }
+        //Scene currentScene = SceneManager.GetActiveScene();
+        SceneManager.LoadScene(mainMenuSceneIndex, LoadSceneMode.Single);
+
     }
 
     /// <summary>
