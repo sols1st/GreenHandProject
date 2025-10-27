@@ -16,7 +16,8 @@ public class YesButton : Interactable
             }
             cur = cur.parent;
         }
-        CardManager.Instance.HideSceneCanvas();
-        CardManager.Instance.ShowDeductionCanvas();
+        // todo 进入推理
+        CursorManager.Instance.DisableCustomCursor(); // 测试使用
+        DeductionManager.Instance.ShowDeductionCanvas();
     }
 }

@@ -25,11 +25,10 @@ public class CardDropdown : MonoBehaviour
         PopulateDropdown(cards);
     }
     
-    // 获取卡牌列表的虚拟方法，子类可以重写
-    protected virtual List<string> GetCards()
+    protected List<string> GetCards()
     {
-         // return new List<string>(){"CN01", "CN02", "CN03"};
-        return CardManager.Instance.GotCards();
+         return new List<string>(){"CN01", "CN02", "CN03"};
+        // return CardManager.Instance.GotCards();
     }
     
     // 初始化Dropdown
