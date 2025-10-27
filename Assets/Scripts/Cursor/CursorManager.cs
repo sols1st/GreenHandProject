@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class CursorManager : MonoBehaviour
 {
@@ -315,8 +316,15 @@ public class CursorManager : MonoBehaviour
     /// </summary>
     private GameObject Detect2DObjectGO(Vector2 mousePosition)
     {
+        // 动态查找可用的摄像机
+        Camera camera = GetActiveCamera();
+        if (camera == null)
+        {
+            return null;
+        }
+
         // 将屏幕坐标转换为世界坐标
-        Vector3 worldPosition = Camera.main.ScreenToWorldPoint(mousePosition);
+        Vector3 worldPosition = camera.ScreenToWorldPoint(mousePosition);
         Vector2 worldPosition2D = new Vector2(worldPosition.x, worldPosition.y);
 
         // 使用2D raycast检测所有2D对象
@@ -597,6 +605,64 @@ public class CursorManager : MonoBehaviour
         currentCursorType = CursorType.Default;
     }
     
+
+    /// <summary>
+    /// 获取当前可用的摄像机，支持多场景（包括Additional场景）
+    /// </summary>
+    private Camera GetActiveCamera()
+    {
+        // 优先尝试获取Camera.main
+        Camera mainCamera = Camera.main;
+        if (mainCamera != null)
+        {
+            return mainCamera;
+        }
+
+        // 如果Camera.main为null，查找所有已加载场景中的摄像机
+        List<Camera> activeCameras = new List<Camera>();
+
+        // 遍历所有已加载的场景
+        for (int i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCount; i++)
+        {
+            Scene scene = UnityEngine.SceneManagement.SceneManager.GetSceneAt(i);
+            if (scene.isLoaded)
+            {
+                // 在当前场景中查找所有摄像机
+                GameObject[] rootObjects = scene.GetRootGameObjects();
+                foreach (GameObject root in rootObjects)
+                {
+                    Camera[] cameras = root.GetComponentsInChildren<Camera>(true);
+                    foreach (Camera foundCamera in cameras)
+                    {
+                        // 检查摄像机是否处于活动状态且没有被禁用
+                        if (foundCamera != null && foundCamera.enabled && foundCamera.gameObject.activeInHierarchy)
+                        {
+                            activeCameras.Add(foundCamera);
+                        }
+                    }
+                }
+            }
+        }
+
+        // 如果找到了活跃的摄像机，选择最适合的一个
+        if (activeCameras.Count > 0)
+        {
+            // 优先级：MainCamera标签 > 没有标签的摄像机 > 其他摄像机
+            foreach (Camera cam in activeCameras)
+            {
+                if (cam.CompareTag("MainCamera"))
+                {
+                    return cam;
+                }
+            }
+
+            // 如果没有找到MainCamera标签的摄像机，返回第一个活跃的摄像机
+            return activeCameras[0];
+        }
+
+        // 如果都没有找到，返回null
+        return null;
+    }
 
     /// <summary>
     /// 内部方法：设置光标
