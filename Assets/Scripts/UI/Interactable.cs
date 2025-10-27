@@ -5,6 +5,7 @@ using UnityEngine;
 public abstract class Interactable : MonoBehaviour
 {
     public bool isInteractable = true;
+    public bool isHover = false;
     /// <summary>
     /// 当点击此物体时触发
     /// 子类需要实现具体的交互逻辑
