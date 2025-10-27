@@ -13,7 +13,7 @@ public class CardManager : MonoBehaviour
     public Image newCardImage;
     public TMP_Text newCardName;
     private Dictionary<string, Card> _allCards = new Dictionary<string, Card>();
-    private List<string> _gotCards = new List<string>();
+    [SerializeField] private List<string> _gotCards = new List<string>();
     private GameObject _endPoint;
     private Dictionary<string, string> _endings  = new Dictionary<string, string>();
     public GameObject deductionCanvas;
