@@ -143,6 +143,13 @@ public class DialogueManager : MonoBehaviour
     private void LoadCsvData(TextAsset csvFile)
     {
         dialogueList.Clear();
+        string csvText = csvFile.text;
+
+        // 处理UTF-8 BOM字符
+        if (csvText.Length > 0 && csvText[0] == '\uFEFF')
+        {
+            csvText = csvText.Substring(1);
+        }
         StringReader reader = new StringReader(csvFile.text);
 
         // 跳过表头
@@ -268,7 +275,10 @@ public class DialogueManager : MonoBehaviour
             case "U002": // 主要角色：主面板+立绘+名称
                 ShowMainPanel(showPortrait: true, showName: true);
                 currentSceneUI.Text_MainName.text = currentData.Character_Name;
-                LoadSpriteToImage(currentSceneUI.Image_MainPortrait, portraitResPath + currentData.Character);
+                if (string.IsNullOrEmpty(currentData.Character))
+                    currentSceneUI.Image_MainPortrait?.gameObject.SetActive(false);
+                else
+                    LoadSpriteToImage(currentSceneUI.Image_MainPortrait, portraitResPath + currentData.Character);
                 ShowDialogueText(currentSceneUI.Text_MainDialogue, currentData.Text);
                 break;
 
@@ -279,8 +289,13 @@ public class DialogueManager : MonoBehaviour
                 ShowDialogueText(currentSceneUI.Text_MinorDialogue, currentData.Text);
                 break;
 
-            case "U004": // 带选项：当前角色面板+选项
-                if (IsImportantCharacter(currentData.Character))
+            case "U004": // 带选项：当前面板+选项
+                if (string.IsNullOrEmpty(currentData.Character) && string.IsNullOrEmpty(currentData.Character_Name))
+                {
+                    ShowNarrationPanel();
+                    ShowDialogueText(currentSceneUI.Text_Narration, currentData.Text);
+                }
+                else if (!string.IsNullOrEmpty(currentData.Character) && IsImportantCharacter(currentData.Character))
                 {
                     ShowMainPanel(showPortrait: true, showName: true);
                     currentSceneUI.Text_MainName.text = currentData.Character_Name;
@@ -692,5 +707,107 @@ public class DialogueManager : MonoBehaviour
                 Debug.LogError("SceneLoader实例未找到，无法处理结局");
             }
         }
+    }
+
+    private void Update()
+    {
+        if (!HasValidUI()) return;
+
+        HandleShortcuts();
+    }
+
+    /// <summary>
+    /// 处理快捷键输入
+    /// </summary>
+    private void HandleShortcuts()
+    {
+        // 1. 空格键切换对话（同鼠标左键点击）
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            TriggerDialogueAdvance();
+        }
+
+        // 2. F1键直接跳转到当前对话的最后一个进程（测试用）
+        if (Input.GetKeyDown(KeyCode.F1))
+        {
+            JumpToLastProcess();
+        }
+
+        // 3. F2键切换直接测试问询对话
+        if (Input.GetKeyDown(KeyCode.F2))
+        {
+            TestInquiryDialogue();
+        }
+
+        // 4. F3键切换结局对话（测试用）
+        if (Input.GetKeyDown(KeyCode.F3))
+        {
+            TestEndingDialogue();
+        }
+    }
+
+    /// <summary>
+    /// 触发对话前进（同鼠标左键点击）
+    /// </summary>
+    private void TriggerDialogueAdvance()
+    {
+        // 检查选项面板是否激活，激活时不响应空格键
+        if (currentSceneUI.Panel_Options != null && currentSceneUI.Panel_Options.activeSelf)
+            return;
+
+        if (currentIndex >= dialogueList.Count)
+            return;
+
+        DialogueData currentData = dialogueList[currentIndex];
+        if (isTyping)
+            SkipTyping(currentData); // 跳过逐字
+        else
+        {
+            currentIndex++;
+            ShowCurrentDialogue(); // 下一条对话
+        }
+    }
+
+    /// <summary>
+    /// 跳转到最后一个进程（测试用）
+    /// </summary>
+    private void JumpToLastProcess()
+    {
+        if (dialogueList.Count == 0) return;
+
+        Debug.Log($"跳转到最后一个进程，原索引: {currentIndex} -> 新索引: {dialogueList.Count - 1}");
+
+        currentIndex = dialogueList.Count - 1;
+        ShowCurrentDialogue();
+    }
+
+    /// <summary>
+    /// 测试问询对话（直接按文件顺序）
+    /// </summary>
+    private void TestInquiryDialogue()
+    {
+        if (inquiryDialogueCSV == null)
+        {
+            Debug.LogWarning("问询对话CSV文件未分配！");
+            return;
+        }
+
+        Debug.Log("切换到问询对话（测试模式）");
+        SwitchToInquiryDialogue();
+    }
+
+    /// <summary>
+    /// 测试结局对话
+    /// </summary>
+    private void TestEndingDialogue()
+    {
+        if (endingDialogueCSV == null)
+        {
+            Debug.LogWarning("结局对话CSV文件未分配！");
+            return;
+        }
+
+        Debug.Log("切换到结局对话（测试模式）");
+        SwitchToEndingDialogue();
     }
 }
