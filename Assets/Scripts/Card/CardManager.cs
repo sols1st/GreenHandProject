@@ -9,10 +9,10 @@ using UnityEngine.UI;
 public class CardManager : MonoBehaviour
 {
     public static CardManager Instance { get; private set; }
-    public GameObject newCard;
+    public GameObject newCard;    
     public Image newCardImage;
     public TMP_Text newCardName;
-    public GameObject cardDetailCanvas;
+    public GameObject cardDetailCanvas; 
     public Image cardDetailImage;
     public TMP_Text cardDetailName;
     private Dictionary<string, Card> _allCards = new Dictionary<string, Card>();
