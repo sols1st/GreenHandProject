@@ -60,8 +60,6 @@ public class AudioManager : MonoBehaviour
                 musicSource.Stop();
                 musicSource.clip = entry.clip;
                 musicSource.Play();
-
-                Debug.Log($"播放背景音乐: {key}");
                 return;
             }
         }

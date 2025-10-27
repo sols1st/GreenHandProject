@@ -1,0 +1,68 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8716835848025086907
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6679436135611733047}
+  - component: {fileID: 587823206370290794}
+  m_Layer: 0
+  m_Name: DeductionManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6679436135611733047
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8716835848025086907}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &587823206370290794
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8716835848025086907}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1ffbae764b95462f9325560019213fe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DeductionCanvas: {fileID: 0}
+  Deduction1: {fileID: 0}
+  Deduction2: {fileID: 0}
+  Deduction3: {fileID: 0}
+  Deduction4: {fileID: 0}
+  Deduction5: {fileID: 0}
+  Deduction6: {fileID: 0}
+  LogicCard1: {fileID: 0}
+  LogicCard2: {fileID: 0}
+  LogicCard3: {fileID: 0}
+  tabs:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  powerTab: {fileID: 0}
+  validateEndingButton: {fileID: 0}
+  endingText: {fileID: 0}
+  endingCanvas: {fileID: 0}
+  openCardBagButton: {fileID: 0}
+  noticeCanvas: {fileID: 0}
+  knife: {fileID: 0}
+  next: {fileID: 0}

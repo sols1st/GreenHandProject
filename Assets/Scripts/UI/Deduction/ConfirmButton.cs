@@ -32,16 +32,16 @@ public class ConfirmButton : Interactable
             return;
         }
         // todo ending
-        var isCorrect = CardManager.Instance.IsEnding(selectedFirstText, selectedSecondText);
-        if (!isCorrect)
-        {
-            notice.text = "Cards are incorrect";
-            notice.gameObject.SetActive(true);
-            // 启动新的协程
-            hideNoticeCoroutine = StartCoroutine(HideNoticeAfterDelay());
-            return;
-        }
-        CardManager.Instance.ShowEnding();
+        // var isCorrect = CardManager.Instance.IsEnding(selectedFirstText, selectedSecondText);
+        // if (!isCorrect)
+        // {
+        //     notice.text = "Cards are incorrect";
+        //     notice.gameObject.SetActive(true);
+        //     // 启动新的协程
+        //     hideNoticeCoroutine = StartCoroutine(HideNoticeAfterDelay());
+        //     return;
+        // }
+        // CardManager.Instance.ShowEnding();
 
         StartCoroutine(HideCurrentCanvas());
     }

@@ -18,7 +18,5 @@ public class testbutton : Interactable
             CursorManager.Instance.EnableCustomCursor();
             isEnabled = true;
         }
-            
-        
     }
 }

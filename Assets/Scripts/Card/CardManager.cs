@@ -9,17 +9,15 @@ using UnityEngine.UI;
 public class CardManager : MonoBehaviour
 {
     public static CardManager Instance { get; private set; }
-    public GameObject newCard;
+    public GameObject newCard;    
     public Image newCardImage;
     public TMP_Text newCardName;
+    public GameObject cardDetailCanvas; 
+    public Image cardDetailImage;
+    public TMP_Text cardDetailName;
     private Dictionary<string, Card> _allCards = new Dictionary<string, Card>();
-    [SerializeField]
-    private List<string> _gotCards = new List<string>();
     private GameObject _endPoint;
-    private Dictionary<string, string> _endings  = new Dictionary<string, string>();
     public GameObject deductionCanvas;
-    private string _endingSelectedCards;
-    public GameObject endingCanvas;
     private GameObject _sceneCanvas;
     
     private void Awake()
@@ -34,66 +32,46 @@ public class CardManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         LoadCardFromFile();
-        LoadEndingFromFile();
 
     }
 
+    // 加载卡牌数据
     private void LoadCardFromFile()
     {
-        var path = Path.Combine(Application.dataPath, "Resources/CardTestFiles/CardTestData.csv");
+        var path = Path.Combine(Application.dataPath, "Resources/CardTestFiles/CardData.csv");
 
         // 清空现有数据
         _allCards.Clear();
-        _gotCards.Clear();
-
-
-        var csvLines = File.ReadAllLines(path);
-       
-        // 跳过标题行，从第二行开始处理
-        for (var i = 1; i < csvLines.Length; i++)
-        {
-            var line = csvLines[i].Split(',');
-
-            // 创建卡牌对象
-            var card = new Card()
-            {
-                name = line[0].Trim(),
-                summary = line[1].Trim(),
-                function = line[2].Trim(),
-                plot = line[3].Trim(),
-                type = line[4].Trim(),
-                image = line[5].Trim(),
-            };
-            _allCards.Add(card.name, card);
-        }
-    }
-
-    private void LoadEndingFromFile()
-    {
-        var path = Path.Combine(Application.dataPath, "Resources/CardTestFiles/EndingTest.csv");
-
-        // 清空现有数据
-        _endings.Clear();
-        var allLines = File.ReadAllText(path);
-        var lines = ParseCsvWithLineBreaks(allLines);
+        var allContent = File.ReadAllText(path);
+        var csvLines = ParseCsvWithLineBreaks(allContent);
 
         // 跳过标题行，从第二行开始处理
-        for (var i = 1; i < lines.Count; i++)
+        for (var i = 1; i < csvLines.Count; i++)
         {
-            var line = lines[i];
-            if (line.Count >= 3)
+            var line = csvLines[i];
+            if (line.Count >= 5)
             {
-                // 第1列和第2列组合作为key
-                var key = line[0].Trim() + line[1].Trim();
-                // 第3列作为值
-                var value = line[2].Trim();
-
-                // 添加到字典中
-                _endings[key] = value;
+                // 创建卡牌对象
+                var card = new Card()
+                {
+                    id = line[0].Trim(),
+                    type = line[1].Trim(),
+                    function = line[2].Trim().Split(' '),
+                    name = line[3].Trim(),
+                    summary = line[4].Trim(),
+                    // plot = line[3].Trim(),
+                    image = line[0].Trim(),
+                    
+                };
+                // todo 测试使用
+                // var testCards = new List<string> { "CA003", "CA006" , "CA016", "CA020", "CA010", "CA019", "CA028", "CA033"};
+                // if (testCards.Contains(card.id)) card.isGot = true;
+                _allCards.Add(card.id, card);
             }
         }
     }
 
+    // 加载结局数据
     private List<List<string>> ParseCsvWithLineBreaks(string csvContent)
     {
         var lines = new List<List<string>>();
@@ -160,20 +138,26 @@ public class CardManager : MonoBehaviour
         return lines;
     }
 
+    // 判断是否拥有卡牌
     public bool HasCards(string[] cards)
     {
         foreach (var card in cards)
         {
-            if (!_gotCards.Contains(card)) return false;
+            if (!_allCards[card].isGot) return false;
         }
         return true;
     }
 
-    public void GetNewCard(string card)
+    // 获取新卡牌
+    public void GetNewCard(string cardName)
     {
-        _gotCards.Add(card);
-        ActivateNewCardUI(card);
+        var card = _allCards[cardName];
+        card.isGot = true;
+        // 获取卡牌音效
+        AudioManager.Instance.PlaySoundEffect("V003");
+        ActivateNewCardUI(cardName);
         _endPoint?.GetComponent<EndPoint>().CheckIsActive();
+        CardBagManager.Instance.RefreshNewCard();
     }
 
     private void ActivateNewCardUI(string cardName)
@@ -181,7 +165,7 @@ public class CardManager : MonoBehaviour
         var card = _allCards[cardName];
         // todo 路径修改
         // var imagePath = "CardTestFiles/Images" + card.image;
-        var imagePath = "CardTestFiles/Images/CardTestImage";
+        var imagePath = "Card/Images/物品卡详情";
         var image = Resources.Load<Sprite>(imagePath);
         newCardImage.sprite = image;
         newCardName.text = card.name;
@@ -193,38 +177,83 @@ public class CardManager : MonoBehaviour
         _endPoint = endPoint;
     }
 
-    public List<string> GotCards()
+    public List<Card> GetTypeCards(string type = "", string[] functions = null)
     {
-        return _gotCards;
+        var cards = new List<Card>();
+        var gotCards = new List<Card>();
+        var notGotCards = new List<Card>();
+
+        foreach (var card in _allCards.Values)
+        {
+            if (type != "" && card.type != type)
+            {
+                continue;
+            }
+
+            // 如果functions不为null，判断card.functions是否包含functions中的任何一个
+            if (functions != null && functions.Length > 0)
+            {
+                bool hasMatchingFunction = false;
+                foreach (var requiredFunction in functions)
+                {
+                    foreach (var cardFunction in card.function)
+                    {
+                        if (cardFunction == requiredFunction)
+                        {
+                            hasMatchingFunction = true;
+                            break;
+                        }
+                    }
+                    if (hasMatchingFunction)
+                        break;
+                }
+                if (!hasMatchingFunction)
+                {
+                    continue;
+                }
+            }
+            if (card.isGot)
+            {
+                gotCards.Add(card);
+            }
+            else
+            {
+                notGotCards.Add(card);
+            }
+        }
+
+        cards.AddRange(gotCards);
+        cards.AddRange(notGotCards);
+        return cards;
     }
 
-    public bool IsEnding(string firstCardName, string secondCardName)
-    {
-        var cardNames = firstCardName + secondCardName;
-        if (_endings.ContainsKey(cardNames))
-        {
-            _endingSelectedCards = cardNames;
-            return true;
-        }
-        cardNames = secondCardName + firstCardName;
-        if (_endings.ContainsKey(cardNames))
-        {
-            _endingSelectedCards = cardNames;
-            return true;
-        }
-        return false;
-    }
+    // public bool IsEnding(string firstCardName, string secondCardName)
+    // {
+    //     var cardNames = firstCardName + secondCardName;
+    //     if (_endings.ContainsKey(cardNames))
+    //     {
+    //         _endingSelectedCards = cardNames;
+    //         return true;
+    //     }
+    //     cardNames = secondCardName + firstCardName;
+    //     if (_endings.ContainsKey(cardNames))
+    //     {
+    //         _endingSelectedCards = cardNames;
+    //         return true;
+    //     }
+    //     return false;
+    // }
 
     public void ShowDeductionCanvas()
     {
         deductionCanvas.SetActive(true);
     }
     
-    public void ShowEnding()
-    {
-        endingCanvas.GetComponent<Ending>().SetText(_endings[_endingSelectedCards]);
-        endingCanvas.SetActive(true);
-    }
+    // public void ShowEnding()
+    // {
+    //     endingCanvas.GetComponent<Ending>().SetText(_endings[_endingSelectedCards]);
+    //     endingCanvas.SetActive(true);
+    // }
 
     public void UpdateSceneCanvas(GameObject canvas)
     {
@@ -234,5 +263,23 @@ public class CardManager : MonoBehaviour
     public void HideSceneCanvas()
     {
         _sceneCanvas.SetActive(false);
+    }
+
+    public void ShowCardDetail(string cardID)
+    {
+        var card = _allCards[cardID];
+        // todo 路径修改、详情UI修改
+        // var imagePath = "CardTestFiles/Images" + card.image;
+        var imagePath = "Card/Images/物品卡详情";
+        var image = Resources.Load<Sprite>(imagePath);
+        cardDetailImage.sprite = image;
+        cardDetailName.text = card.name;
+        cardDetailCanvas.SetActive(true); 
+    }
+
+    public Card GetCardInfo(string cardID)
+    {
+        var card = _allCards[cardID];
+        return card;
     }
 }
