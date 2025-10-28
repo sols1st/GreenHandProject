@@ -211,7 +211,7 @@ public class DeductionManager : MonoBehaviour
         DisableAllInteractable();
         DeductionCanvas.SetActive(false);
         openCardBagButton.SetActive(true);
-       // SceneLoader.Instance.LoadNextChapterScene(); // todo 修改
+        SceneLoader.Instance.LoadNextChapterScene(); // todo 修改
     }
 
     // 更新选中的卡槽
@@ -441,7 +441,7 @@ public class DeductionManager : MonoBehaviour
             if (!_isCutLine)
             {
                 // todo 文案待更改
-                ShowNotice(new []{"notice 1", "notice 2", "notice 3"});
+                ShowNotice(_errorLogicCardNotice);
                 knife.SetActive(true);
                 return;
             }
@@ -452,7 +452,7 @@ public class DeductionManager : MonoBehaviour
             if (!_isCutLine)
             {
                 // todo 文案待更改
-                ShowNotice(new []{"notice 1", "notice 2", "notice 3"});
+                ShowNotice(_errorLogicCardNotice);
                 knife.SetActive(true);
                 return;
             }
@@ -463,7 +463,7 @@ public class DeductionManager : MonoBehaviour
             if (!_isCutLine)
             {
                 // todo 文案待更改
-                ShowNotice(new []{"notice 1", "notice 2", "notice 3"});
+                ShowNotice(_errorLogicCardNotice);
                 knife.SetActive(true);
                 return;
             }
@@ -471,9 +471,9 @@ public class DeductionManager : MonoBehaviour
         }
         else
         {
-            // 排列不正确提示
-            ShowNotice(new []{_errorLogicCardNotice[_errorLogicCardNoticeIndex]});
-            _errorLogicCardNoticeIndex = (_errorLogicCardNoticeIndex + 1) % 3;
+            // todo 排列不正确提示
+            // ShowNotice(new []{_errorLogicCardNotice[_errorLogicCardNoticeIndex]});
+            // _errorLogicCardNoticeIndex = (_errorLogicCardNoticeIndex + 1) % 3;
             return;
         }
         // todo 进入结局对话
