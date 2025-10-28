@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,6 +9,13 @@ public class LogicCard : Interactable
     public Image image;
     // public TMP_Text text;
     public Sprite defaultSprite;
+    public Sprite lockSprite;
+
+    private void Awake()
+    {
+        image.sprite = lockSprite;
+    }
+
     public override void TriggerOnClick()
     {
         if (_card != null)
@@ -37,5 +45,13 @@ public class LogicCard : Interactable
     public string GetCardID()
     {
         return _card == null ? "" : _card.id;
+    }
+    
+    public void Unlock()
+    {
+        if (image.sprite == lockSprite)
+        {
+            image.sprite = defaultSprite;
+        }
     }
 }
