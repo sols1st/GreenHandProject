@@ -71,7 +71,7 @@ public class CardManager : MonoBehaviour
                 // todo 测试使用
                 // var testCards = new List<string> { "CA016", "CA020", "CA010", "CA019", "CA028", "CA033"};
                 // if (testCards.Contains(card.id)) card.isGot = true;
-                card.isGot = true;
+                // card.isGot = true;
                 _allCards.Add(card.id, card);
             }
         }
