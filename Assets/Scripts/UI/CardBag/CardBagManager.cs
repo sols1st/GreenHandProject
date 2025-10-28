@@ -154,7 +154,7 @@ public class CardBagManager : MonoBehaviour
                 break;
             case "Dialogue":
                 // todo 对话使用
-                // DialogueManager.Instance.OnCardSelected(_selectedCard.id);
+                DialogueManager.Instance.OnCardSelected(_selectedCard.id);
                 openCardBagButton.SetActive(true);
                 break;
         }

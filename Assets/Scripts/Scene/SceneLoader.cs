@@ -118,7 +118,16 @@ public class SceneLoader : MonoBehaviour
         if (newScene.IsValid() && newScene.isLoaded)
         {
             SceneManager.SetActiveScene(newScene);
-            // 触发第一章主线对话
+
+            float waitTime = 0f;
+            float maxWaitTime = 2f;
+            while (DialogueManager.Instance == null && waitTime < maxWaitTime)
+            {
+                waitTime += Time.deltaTime;
+                yield return null;
+            }
+
+            //触发第一章主线对话
             if (DialogueManager.Instance != null)
             {
                 DialogueManager.Instance.SwitchToMain1Dialogue();

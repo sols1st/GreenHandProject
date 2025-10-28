@@ -121,6 +121,12 @@ public class DialogueUIManager
 
     private void SetupOptionButton(GameObject buttonObject, string optionStr, int optionIndex)
     {
+        // 清理选项字符串中的多余字符
+        string cleanOptionStr = optionStr.Trim();
+        if (cleanOptionStr.StartsWith(":"))
+        {
+            cleanOptionStr = cleanOptionStr.Substring(1);
+        }
         string[] optData = optionStr.Split(':');
 
         if (optData.Length < 2)

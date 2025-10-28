@@ -124,15 +124,6 @@ public class DialogueManager : MonoBehaviour
     {
         if (Instance != this) return;
         Debug.Log("DialogueManager初始化完成，等待场景控制器触发对话");
-        // 加载主线对话CSV
-        //if (mainDialogueCSV != null)
-        //{
-        //    LoadDialogueData(mainDialogueCSV);
-        //}
-        //else
-        //{
-        //    Debug.LogError("主线对话CSV文件未分配");
-        //}
     }
 
     /// <summary>加载CSV数据</summary>
@@ -375,7 +366,10 @@ public class DialogueManager : MonoBehaviour
                     LoadSpriteToImage(currentSceneUI.Image_MinorAvatar, avatarResPath + currentData.Character);
                     textDisplayController.StartTypingEffect(currentSceneUI.Text_MinorDialogue, currentData.Text, typeSpeed);
                 }
-                uiManager.ShowOptions(currentData.Choice);
+                if (!string.IsNullOrEmpty(currentData.Choice))
+                {
+                    uiManager.ShowOptions(currentData.Choice);
+                }
                 break;
 
             case "U005"://大字报触发节点
@@ -441,6 +435,8 @@ public class DialogueManager : MonoBehaviour
 
         // 跳转到目标进程
         OnOptionClicked(option.TargetProcess);
+
+        currentOption = null;
     }
 
     /// <summary>
@@ -474,6 +470,35 @@ public class DialogueManager : MonoBehaviour
     }
 
     /// <summary>
+    /// 卡牌选择完成后的回调
+    /// </summary>
+    public void OnCardSelected(string cardId)
+    {
+        if (currentOption != null)
+        {
+            // 检查选择的卡牌是否符合要求
+            if (currentOption.RequiresCard && !string.IsNullOrEmpty(currentOption.RequireCard))
+            {
+                if (cardId == currentOption.RequireCard)
+                {
+                    ProcessOption(currentOption);
+                }
+                else
+                {
+                    uiManager?.HideAllPanels();
+                    uiManager?.HideOptions();
+                    currentOption = null;
+                }
+            }
+            else
+            {
+                ProcessOption(currentOption);
+            }
+        }
+    }
+
+
+    /// <summary>
     /// 判断是否为重要角色
     /// </summary>
     /// <param name="charId"></param>
@@ -490,6 +515,7 @@ public class DialogueManager : MonoBehaviour
     /// <param name="npcObjectName">NPC的GameObject名称，对应CSV中的Character字段</param>
     public void StartNPCDialogue(string npcId)
     {
+        Debug.Log($"开始NPC对话，NPC ID: {npcId}");
         // 根据当前场景自动选择对应的问询对话文件
         string currentScene = GetCurrentSceneId();
 
@@ -562,7 +588,6 @@ public class DialogueManager : MonoBehaviour
     {
         if (!hasShownReasoningIntro)
         {
-            //SwitchToMainDialogue();
             SwitchToReasoningDialogue(); // 使用专门的推理对话文件
             int reasoningStartIndex = FindFirstProcessOfScene("S007");
 
@@ -660,10 +685,15 @@ public class DialogueManager : MonoBehaviour
         }
         DialogueData currentData = dialogueList[currentIndex];
 
-        // 检查Next字段
-        if (string.IsNullOrEmpty(currentData.Next))
+        // 检查是否有选项 - 如果有选项，不自动继续，等待玩家选择
+        if (!string.IsNullOrEmpty(currentData.Choice))
         {
-            Debug.Log($"对话进程 {currentData.Process} 的Next为空，结束对话");
+            return;
+        }
+
+        // 只有当选项字段和Next字段均为空时才结束对话
+        if (string.IsNullOrEmpty(currentData.Choice) && string.IsNullOrEmpty(currentData.Next))
+        {
             uiManager.HideAllPanels();
             uiManager.HideOptions();
             return;
