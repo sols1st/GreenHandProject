@@ -1,10 +1,6 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class DeductionManager : MonoBehaviour
 {
@@ -45,11 +41,16 @@ public class DeductionManager : MonoBehaviour
     private string[] _logic2Functions = new string[6]{"A3",  "A4", "B3", "B4", "C3", "C4"};
     private string[] _logic3Functions = new string[6]{"A5",  "A6", "B5", "B6", "C5", "C6"};
     private bool _isCutLine = false;
+    private string[] _cutLineNotice = 
+    {
+        "你这样相信自己的记忆与推测吗？",
+        "记忆最容易被篡改。"
+    };
     private string[] _errorLogicCardNotice = 
     {
-        "你就这么相信自己？",
-        "真的存在绝对真实的东西吗？",
-        "真相不是很无趣吗？"
+        "关键元素充当贯穿故事始终的线索。",
+        "这似乎并不是同一个故事？",
+        "似乎有联系更紧密的逻辑卡。"
     };
     private int _errorLogicCardNoticeIndex = 0;
     private List<string> _paragraphs = new List<string>();
@@ -297,7 +298,6 @@ public class DeductionManager : MonoBehaviour
                 // 第一章生成逻辑卡牌后
                 if (_chapter == 1 && logicCard != null)
                 {
-                    next.GetComponent<NextChapter>().UpdateChapter(_chapter);
                     next.SetActive(true);
                     Deduction1.GetComponent<SelectCardItem>().isInteractable = false;
                     Deduction2.GetComponent<SelectCardItem>().isInteractable = false;
@@ -331,7 +331,6 @@ public class DeductionManager : MonoBehaviour
                 // 第二章生成逻辑卡牌后
                 if (_chapter == 2 && logicCard != null)
                 {
-                    next.GetComponent<NextChapter>().UpdateChapter(_chapter);
                     next.SetActive(true);
                     Deduction3.GetComponent<SelectCardItem>().isInteractable = false;
                     Deduction4.GetComponent<SelectCardItem>().isInteractable = false;
@@ -362,7 +361,6 @@ public class DeductionManager : MonoBehaviour
                 }
                 if (_chapter == 3 && logicCard != null)
                 {
-                    next.GetComponent<NextChapter>().UpdateChapter(_chapter);
                     next.SetActive(true);
                     Deduction5.GetComponent<SelectCardItem>().isInteractable = false;
                     Deduction6.GetComponent<SelectCardItem>().isInteractable = false;
@@ -383,36 +381,49 @@ public class DeductionManager : MonoBehaviour
     private void SetChapter1()
     {
         DisableAllInteractable();
+        validateEndingButton.SetActive(false);
         // 可交互
         Deduction1.GetComponent<SelectCardItem>().isInteractable = true;
+        Deduction1.GetComponent<SelectCardItem>().Unlock();
         Deduction2.GetComponent<SelectCardItem>().isInteractable = true;
+        Deduction2.GetComponent<SelectCardItem>().Unlock();
         LogicCard1.GetComponent<LogicCard>().isInteractable = true;
+        LogicCard1.GetComponent<LogicCard>().Unlock();
     }
     
     // chapter2 对应UI初始化
     private void SetChapter2()
     {
         DisableAllInteractable();
+        validateEndingButton.SetActive(false);
         // 可交互
         Deduction3.GetComponent<SelectCardItem>().isInteractable = true;
+        Deduction3.GetComponent<SelectCardItem>().Unlock();
         Deduction4.GetComponent<SelectCardItem>().isInteractable = true;
+        Deduction4.GetComponent<SelectCardItem>().Unlock();
         LogicCard2.GetComponent<LogicCard>().isInteractable = true;
+        LogicCard2.GetComponent<LogicCard>().Unlock();
     }
     
     // chapter3 对应UI初始化
     private void SetChapter3()
     {
         DisableAllInteractable();
+        validateEndingButton.SetActive(false);
         // 可交互
         Deduction5.GetComponent<SelectCardItem>().isInteractable = true;
+        Deduction5.GetComponent<SelectCardItem>().Unlock();
         Deduction6.GetComponent<SelectCardItem>().isInteractable = true;
+        Deduction6.GetComponent<SelectCardItem>().Unlock();
         LogicCard3.GetComponent<LogicCard>().isInteractable = true;
+        LogicCard3.GetComponent<LogicCard>().Unlock();
     }
     
     // chapter4 对应UI初始化
     private void SetChapter4()
     {
         EnableAllInteractable();
+        validateEndingButton.SetActive(true);
     }
     
     // 剪线
@@ -440,8 +451,7 @@ public class DeductionManager : MonoBehaviour
             // todo 结局A
             if (!_isCutLine)
             {
-                // todo 文案待更改
-                ShowNotice(_errorLogicCardNotice);
+                ShowNotice(_cutLineNotice);
                 knife.SetActive(true);
                 return;
             }
@@ -451,8 +461,7 @@ public class DeductionManager : MonoBehaviour
             // todo 结局B
             if (!_isCutLine)
             {
-                // todo 文案待更改
-                ShowNotice(_errorLogicCardNotice);
+                ShowNotice(_cutLineNotice);
                 knife.SetActive(true);
                 return;
             }
@@ -462,8 +471,7 @@ public class DeductionManager : MonoBehaviour
             // todo 结局C
             if (!_isCutLine)
             {
-                // todo 文案待更改
-                ShowNotice(_errorLogicCardNotice);
+                ShowNotice(_cutLineNotice);
                 knife.SetActive(true);
                 return;
             }
@@ -472,8 +480,8 @@ public class DeductionManager : MonoBehaviour
         else
         {
             // todo 排列不正确提示
-            // ShowNotice(new []{_errorLogicCardNotice[_errorLogicCardNoticeIndex]});
-            // _errorLogicCardNoticeIndex = (_errorLogicCardNoticeIndex + 1) % 3;
+            ShowNotice(new []{_errorLogicCardNotice[_errorLogicCardNoticeIndex]});
+            _errorLogicCardNoticeIndex = (_errorLogicCardNoticeIndex + 1) % 3;
             return;
         }
         // todo 进入结局对话
