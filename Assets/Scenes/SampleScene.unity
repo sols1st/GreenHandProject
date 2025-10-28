@@ -838,10 +838,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3595038407788232590, guid: 9886a1713b172cd4c95235f47a834585, type: 3}
-      propertyPath: m_SortingOrder
-      value: 30
-      objectReference: {fileID: 0}
     - target: {fileID: 8555842842423488672, guid: 9886a1713b172cd4c95235f47a834585, type: 3}
       propertyPath: m_Name
       value: DialogueCanvas
@@ -1379,10 +1375,6 @@ PrefabInstance:
     - target: {fileID: 558672816744442000, guid: 4c1f59d11c2694313b882cd3f9532b7a, type: 3}
       propertyPath: m_Name
       value: SceneManager
-      objectReference: {fileID: 0}
-    - target: {fileID: 2162336389494767237, guid: 4c1f59d11c2694313b882cd3f9532b7a, type: 3}
-      propertyPath: chapter
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2587759092481978378, guid: 4c1f59d11c2694313b882cd3f9532b7a, type: 3}
       propertyPath: m_LocalPosition.x
