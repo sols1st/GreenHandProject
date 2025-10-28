@@ -4,19 +4,19 @@ using UnityEngine;
 
 public class Item : Interactable
 {
-    [SerializeField] private string cardName;
+    private string cardName;
     public override void TriggerOnClick()
     {
+        cardName = this.gameObject.name;
+        Debug.Log($"卡片 {cardName} 被点击！");
         string[] cardsToCheck = { cardName };
-        Debug.Log($"1 {cardName}");
         if (!CardManager.Instance.HasCards(cardsToCheck))
         {
-            Debug.Log($"2 {cardName}");
+            Debug.Log($"卡片 {cardName} 被获取！");
             CardManager.Instance.GetNewCard(cardName);
         }
         else
         {
-            Debug.Log($"3 {cardName}");
             Debug.Log($"卡片 {cardName} 已被获取！");
         }
     }

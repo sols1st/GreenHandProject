@@ -25,21 +25,9 @@ public class SelectCardItem : Interactable
         _card = card;
         // todo 加载图片
         // var imagePath = "CardTestFiles/Images" + card.image;
-        var imagePath = "CardTestFiles/Images/CardTestImage";
-        if (_card.type == "Item")
-        {
-            imagePath = "Card/Images/物件卡";
-        }
-        else if (_card.type == "Memory")
-        {
-            imagePath = "Card/Images/记忆卡";
-        }
-        else if (_card.type == "Power")
-        {
-            imagePath = "Card/Images/势力卡";
-        }
+        var imagePath = "Card/CardImages/" + card.id;
         image.sprite = Resources.Load<Sprite>(imagePath);
-        text.text = _card.name;
+        // text.text = _card.name;
     }
 
     // public void UpdateUnInteractable()
