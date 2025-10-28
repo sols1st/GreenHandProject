@@ -41,22 +41,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 4661115635693728323}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6f18ec854713543599f4ac60260d4f50, type: 3}
+  m_Script: {fileID: 11500000, guid: ec6f845eb3137634fa465d73981fcb11, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   musicSource: {fileID: 0}
   sfxSource: {fileID: 0}
-  backgroundMusics:
-  - key: B001
-    clip: {fileID: 8300000, guid: 47628df53714d49b29e47a0ca7a3f2d4, type: 3}
-  - key: B002(1)
-    clip: {fileID: 8300000, guid: d9d9febc269dc4d65b7e27e86cd97b56, type: 3}
-  - key: B002(2)
-    clip: {fileID: 8300000, guid: f5cdc67803d844bd58e5b694a637cc8c, type: 3}
-  soundEffects:
-  - key: V001
-    clip: {fileID: 8300000, guid: 4025421f5a91840d7b4e99550fe6f29d, type: 3}
-  - key: V002
-    clip: {fileID: 8300000, guid: d4a6b9418e3844a7b968ad4a87ffc49b, type: 3}
-  - key: V003
-    clip: {fileID: 8300000, guid: 887e0834108ca44fa95594ce3648b5b4, type: 3}
+  backgroundMusics: []
+  soundEffects: []

@@ -22,7 +22,6 @@ public class DeductionManager : MonoBehaviour
     public Tab[] tabs;
     public GameObject powerTab;
     public GameObject validateEndingButton;
-    public TMP_Text endingText;
     public GameObject endingCanvas;
     public GameObject openCardBagButton;
     public GameObject noticeCanvas;
@@ -41,7 +40,7 @@ public class DeductionManager : MonoBehaviour
         { "Deduction6", null }
     };
     private Dictionary<string, string> _endings = new ();
-    private int _chapter = 1;
+    public int _chapter = 1;
     private string[] _logic1Functions = new string[6]{"A1",  "A2", "B1", "B2", "C1", "C2"};
     private string[] _logic2Functions = new string[6]{"A3",  "A4", "B3", "B4", "C3", "C4"};
     private string[] _logic3Functions = new string[6]{"A5",  "A6", "B5", "B6", "C5", "C6"};

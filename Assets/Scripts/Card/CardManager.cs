@@ -15,13 +15,18 @@ public class CardManager : MonoBehaviour
     public GameObject cardDetailCanvas; 
     public Image cardDetailImage;
     public TMP_Text cardDetailName;
+    public GameObject endChoiceCanvas;
+    public GameObject endButton;
+    public GameObject cardBagButton;
     private Dictionary<string, Card> _allCards = new Dictionary<string, Card>();
     private GameObject _endPoint;
-    public GameObject deductionCanvas;
-    private GameObject _sceneCanvas;
+    // public GameObject deductionCanvas;
+    private int _currentChapter = 1;
+    private bool _isFirst = true;
     
     private void Awake()
     {
+        Debug.Log("card manager awake");
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -38,7 +43,7 @@ public class CardManager : MonoBehaviour
     // 加载卡牌数据
     private void LoadCardFromFile()
     {
-        var path = Path.Combine(Application.dataPath, "Resources/CardTestFiles/CardData.csv");
+        var path = Path.Combine(Application.dataPath, "Resources/Card/CardData.csv");
 
         // 清空现有数据
         _allCards.Clear();
@@ -64,8 +69,8 @@ public class CardManager : MonoBehaviour
                     
                 };
                 // todo 测试使用
-                // var testCards = new List<string> { "CA003", "CA006" , "CA016", "CA020", "CA010", "CA019", "CA028", "CA033"};
-                // if (testCards.Contains(card.id)) card.isGot = true;
+                var testCards = new List<string> { "CA016", "CA020", "CA010", "CA019", "CA028", "CA033"};
+                if (testCards.Contains(card.id)) card.isGot = true;
                 _allCards.Add(card.id, card);
             }
         }
@@ -156,10 +161,37 @@ public class CardManager : MonoBehaviour
         // 获取卡牌音效
         AudioManager.Instance.PlaySoundEffect("V003");
         ActivateNewCardUI(cardName);
-        _endPoint?.GetComponent<EndPoint>().CheckIsActive();
+        // 第一次拿到卡牌的时候，出现卡牌库的展开按钮
+        if (_isFirst)
+        {
+            cardBagButton.SetActive(true);
+            _isFirst = false;
+        }
         CardBagManager.Instance.RefreshNewCard();
+        // todo 判断是否能够结束自由探索
+        if (_currentChapter == 1)
+        {
+            if (HasCards(new [] {"CA003", "CA006"}))
+            {
+                ShowEndChoice();
+            }
+        }
+        else if(_currentChapter == 2)
+        {
+            if (HasCards(new [] {"CA016", "CA020"}))
+            {
+                ShowEndChoice();
+            }
+        }
     }
 
+    public void ShowEndChoice()
+    {
+        endButton.SetActive(true);
+        endChoiceCanvas.SetActive(true);
+    }
+    
+    // 获取新卡牌UI
     private void ActivateNewCardUI(string cardName)
     {
         var card = _allCards[cardName];
@@ -172,11 +204,12 @@ public class CardManager : MonoBehaviour
         newCard.SetActive(true);
     }
 
-    public void UpdateEndPoint(GameObject endPoint)
-    {
-        _endPoint = endPoint;
-    }
+    // public void UpdateEndPoint(GameObject endPoint)
+    // {
+    //     _endPoint = endPoint;
+    // }
 
+    // 获取指定类型的卡牌
     public List<Card> GetTypeCards(string type = "", string[] functions = null)
     {
         var cards = new List<Card>();
@@ -244,27 +277,17 @@ public class CardManager : MonoBehaviour
     //     return false;
     // }
 
-    public void ShowDeductionCanvas()
-    {
-        deductionCanvas.SetActive(true);
-    }
+    // public void ShowDeductionCanvas()
+    // {
+    //     deductionCanvas.SetActive(true);
+    // }
     
     // public void ShowEnding()
     // {
     //     endingCanvas.GetComponent<Ending>().SetText(_endings[_endingSelectedCards]);
     //     endingCanvas.SetActive(true);
     // }
-
-    public void UpdateSceneCanvas(GameObject canvas)
-    {
-        _sceneCanvas = canvas;
-    }
     
-    public void HideSceneCanvas()
-    {
-        _sceneCanvas.SetActive(false);
-    }
-
     public void ShowCardDetail(string cardID)
     {
         var card = _allCards[cardID];
@@ -281,5 +304,10 @@ public class CardManager : MonoBehaviour
     {
         var card = _allCards[cardID];
         return card;
+    }
+
+    public void UpdateChapter(int chapter)
+    {
+        _currentChapter = chapter;
     }
 }

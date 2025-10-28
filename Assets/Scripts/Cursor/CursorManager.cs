@@ -215,15 +215,22 @@ public class CursorManager : MonoBehaviour
 
     private void OnDestroy()
     {
-        _inputSystem.Game.Click.performed -= OnClickPerformed;
-        _inputSystem.Disable();
-        _inputSystem = null;
+        if (_inputSystem != null)
+        {
+            _inputSystem.Game.Click.performed -= OnClickPerformed;
+            _inputSystem.Disable();
+            _inputSystem = null;
+        }
     }
 
     private void OnClickPerformed(InputAction.CallbackContext context)
     {
         var interactableGameObject = GetInteractable();
-        if (interactableGameObject == null) return;
+        if (interactableGameObject == null)
+        {
+            AudioManager.Instance.PlaySoundEffect("V001");
+            return;
+        }
         if (interactableGameObject.layer != LayerMask.NameToLayer("Dialogue") &&
             interactableGameObject.layer != LayerMask.NameToLayer("NewCard"))
         {
@@ -266,6 +273,12 @@ public class CursorManager : MonoBehaviour
     /// </summary>
     private GameObject DetectCanvasUIGO(Vector2 mousePosition)
     {
+        // 检查EventSystem是否存在
+        if (EventSystem.current == null)
+        {
+            return null;
+        }
+
         var pointerData = new PointerEventData(EventSystem.current)
         {
             position = mousePosition

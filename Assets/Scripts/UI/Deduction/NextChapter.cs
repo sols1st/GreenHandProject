@@ -10,10 +10,10 @@ public class NextChapter : Interactable
     {
         // todo 进入下一章
         AudioManager.Instance.PlayBackgroundMusic("");
-        DeductionManager.Instance.UpdateChapter(_nextChapter);
+        // DeductionManager.Instance.UpdateChapter(_nextChapter);
         gameObject.SetActive(false);
         DeductionManager.Instance.CloseDeductionCanvas();
-        sceneCanvas.SetActive(true); // 测试使用
+        
     }
 
     public void UpdateChapter(int currentChapter)
