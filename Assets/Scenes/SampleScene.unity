@@ -203,7 +203,7 @@ SpriteRenderer:
   m_Size: {x: 40.92, y: 10.8}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &237625097
@@ -320,7 +320,7 @@ SpriteRenderer:
   m_Size: {x: 40.92, y: 10.8}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &298781401
@@ -573,7 +573,7 @@ SpriteRenderer:
   m_Size: {x: 40.92, y: 10.8}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &477418649
@@ -679,7 +679,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isInteractable: 1
   isHover: 1
-  cardName: CN01
 --- !u!1 &498964358
 GameObject:
   m_ObjectHideFlags: 0
@@ -1334,7 +1333,7 @@ SpriteRenderer:
   m_Size: {x: 40.92, y: 10.8}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &866381491
@@ -1694,6 +1693,10 @@ PrefabInstance:
       value: 'SceneManager '
       objectReference: {fileID: 0}
     - target: {fileID: 2162336389494767237, guid: 4c1f59d11c2694313b882cd3f9532b7a, type: 3}
+      propertyPath: chapter
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2162336389494767237, guid: 4c1f59d11c2694313b882cd3f9532b7a, type: 3}
       propertyPath: endPoint
       value: 
       objectReference: {fileID: 4909477509253755295, guid: 3acbb6b6e40fb41d8a55c08ee599023d, type: 3}
@@ -1827,7 +1830,7 @@ SpriteRenderer:
   m_Size: {x: 40.92, y: 10.8}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &1501182061

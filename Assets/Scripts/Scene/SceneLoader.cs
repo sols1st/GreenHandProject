@@ -112,9 +112,14 @@ public class SceneLoader : MonoBehaviour
         }
         // 设置新场景为活动场景
         Scene newScene = SceneManager.GetSceneByBuildIndex(chapterScene1Index);
-        if (newScene.IsValid())
+        if (newScene.IsValid() && newScene.isLoaded)
         {
             SceneManager.SetActiveScene(newScene);
+            // 触发第一章主线对话
+            if (DialogueManager.Instance != null)
+            {
+                DialogueManager.Instance.SwitchToMain1Dialogue();
+            }
         }
     }
 
@@ -135,21 +140,6 @@ public class SceneLoader : MonoBehaviour
         {
             StartCoroutine(LoadNextSceneCoroutine(currentSceneIndex, nextSceneIndex));
         }
-
-        // 设置新场景为活动场景后触发对话
-        Scene newScene = SceneManager.GetSceneByBuildIndex(nextSceneIndex);
-        if (newScene.IsValid())
-        {
-            SceneManager.SetActiveScene(newScene);
-
-            // 根据场景索引触发对应对话
-            switch (nextSceneIndex)
-            {
-                case 2: DialogueManager.Instance.SwitchToMain1Dialogue(); break;
-                case 3: DialogueManager.Instance.SwitchToMain2Dialogue(); break;
-                case 4: DialogueManager.Instance.SwitchToMain3Dialogue(); break;
-            }
-        }
     }
 
     private IEnumerator LoadNextSceneCoroutine(int currentSceneIndex, int nextSceneIndex)
@@ -169,6 +159,14 @@ public class SceneLoader : MonoBehaviour
         if (newScene.IsValid())
         {
             SceneManager.SetActiveScene(newScene);
+
+            // 根据场景索引触发对应对话
+            switch (nextSceneIndex)
+            {
+                case 2: DialogueManager.Instance.SwitchToMain1Dialogue(); break;
+                case 3: DialogueManager.Instance.SwitchToMain2Dialogue(); break;
+                case 4: DialogueManager.Instance.SwitchToMain3Dialogue(); break;
+            }
         }
     }
 

@@ -145,6 +145,34 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 501612409900884312, guid: 134591b7c539d254c933e1289359af09, type: 3}
+      propertyPath: main1DialogueCSV
+      value: 
+      objectReference: {fileID: 4900000, guid: 76821419915fee14c94bf39f451b03a4, type: 3}
+    - target: {fileID: 501612409900884312, guid: 134591b7c539d254c933e1289359af09, type: 3}
+      propertyPath: main2DialogueCSV
+      value: 
+      objectReference: {fileID: 4900000, guid: c132aaae2abd97c49a05fdf21e884dc9, type: 3}
+    - target: {fileID: 501612409900884312, guid: 134591b7c539d254c933e1289359af09, type: 3}
+      propertyPath: main3DialogueCSV
+      value: 
+      objectReference: {fileID: 4900000, guid: d972bddbcbe08034ba0f5a50e715bc11, type: 3}
+    - target: {fileID: 501612409900884312, guid: 134591b7c539d254c933e1289359af09, type: 3}
+      propertyPath: inquiry1DialogueCSV
+      value: 
+      objectReference: {fileID: 4900000, guid: 13530b85c5f1ca247a06b1b718b89bb9, type: 3}
+    - target: {fileID: 501612409900884312, guid: 134591b7c539d254c933e1289359af09, type: 3}
+      propertyPath: inquiry2DialogueCSV
+      value: 
+      objectReference: {fileID: 4900000, guid: b2c39109a0d55fb4bb16c3cc05ffb44c, type: 3}
+    - target: {fileID: 501612409900884312, guid: 134591b7c539d254c933e1289359af09, type: 3}
+      propertyPath: inquiry3DialogueCSV
+      value: 
+      objectReference: {fileID: 4900000, guid: 530487ead506c1046b72bbbc89898655, type: 3}
+    - target: {fileID: 501612409900884312, guid: 134591b7c539d254c933e1289359af09, type: 3}
+      propertyPath: reasoningDialogueCSV
+      value: 
+      objectReference: {fileID: 4900000, guid: 93de7b3b873349949a910f79389cac4c, type: 3}
     - target: {fileID: 4633863725601945092, guid: 134591b7c539d254c933e1289359af09, type: 3}
       propertyPath: m_Name
       value: DialogueManager
@@ -256,6 +284,74 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &830514054
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 830514057}
+  - component: {fileID: 830514056}
+  - component: {fileID: 830514055}
+  m_Layer: 0
+  m_Name: EventSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &830514055
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 830514054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f231c4fb786f3946a6b90b886c48677, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SendPointerHoverToParent: 1
+  m_HorizontalAxis: Horizontal
+  m_VerticalAxis: Vertical
+  m_SubmitButton: Submit
+  m_CancelButton: Cancel
+  m_InputActionsPerSecond: 10
+  m_RepeatDelay: 0.5
+  m_ForceModuleActive: 0
+--- !u!114 &830514056
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 830514054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76c392e42b5098c458856cdf6ecaaaa1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_FirstSelected: {fileID: 0}
+  m_sendNavigationEvents: 1
+  m_DragThreshold: 10
+--- !u!4 &830514057
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 830514054}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &872401294 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4925139425778025654, guid: e3fa8a4e85e944362ad252f5a7d9b111, type: 3}
@@ -1894,3 +1990,4 @@ SceneRoots:
   - {fileID: 1520621582393837213}
   - {fileID: 248754440721125212}
   - {fileID: 2892266938885653169}
+  - {fileID: 830514057}
