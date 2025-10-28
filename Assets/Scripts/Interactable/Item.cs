@@ -4,10 +4,11 @@ using UnityEngine;
 
 public class Item : Interactable
 {
-    [SerializeField] private string cardName;
+    private string cardName;
     public override void TriggerOnClick()
     {
         cardName = this.gameObject.name;
+        Debug.Log($"¿¨Æ¬ {cardName} ±»µã»÷£¡");
         string[] cardsToCheck = { cardName };
         if (!CardManager.Instance.HasCards(cardsToCheck))
         {
