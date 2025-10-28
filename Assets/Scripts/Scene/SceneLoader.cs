@@ -21,6 +21,7 @@ public class SceneLoader : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            InitializeGame();
         }
         else
         {
@@ -30,21 +31,72 @@ public class SceneLoader : MonoBehaviour
     }
 
     /// <summary>
-    /// BootLoader完成启动后调用
+    /// 游戏初始化
     /// </summary>
-    public void OnBootComplete()
+    private void InitializeGame()
     {
-        Debug.Log("SceneLoader: 启动完成，加载主菜单场景");
+        Debug.Log("SceneLoader: 游戏初始化，加载主菜单");
+        StartCoroutine(LoadMainMenuCoroutine());
+    }
+
+    private IEnumerator LoadMainMenuCoroutine()
+    {
+        AsyncOperation loadOp = SceneManager.LoadSceneAsync(mainMenuSceneIndex, LoadSceneMode.Additive);
+        while (!loadOp.isDone)
+        {
+            yield return null;
+        }
+        // 设置主菜单为活动场景
+        Scene mainMenuScene = SceneManager.GetSceneByBuildIndex(mainMenuSceneIndex);
+        if (mainMenuScene.IsValid())
+        {
+            SceneManager.SetActiveScene(mainMenuScene);
+        }
+    }
+
+    /// <summary>
+    /// 检查场景是否已经加载
+    /// </summary>
+    private bool IsSceneLoaded(int sceneIndex)
+    {
+        for (int i = 0; i < SceneManager.sceneCount; i++)
+        {
+            Scene scene = SceneManager.GetSceneAt(i);
+            if (scene.buildIndex == sceneIndex && scene.isLoaded)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     /// <summary>
     /// 从主菜单开始游戏
-    /// 在主菜单的开始按钮中调用
     /// </summary>
     public void StartGame()
     {
-        Debug.Log("SceneLoader: 开始游戏，加载第一个场景");
-        SceneManager.LoadScene(demoSceneIndex, LoadSceneMode.Single);
+        StartCoroutine(StartGameCoroutine());
+    }
+
+    private IEnumerator StartGameCoroutine()
+    {
+        AsyncOperation loadOp = SceneManager.LoadSceneAsync(demoSceneIndex, LoadSceneMode.Additive);
+        while (!loadOp.isDone)
+        {
+            yield return null;
+        }
+        // 设置新场景为活动场景
+        Scene newScene = SceneManager.GetSceneByBuildIndex(demoSceneIndex);
+        if (newScene.IsValid())
+        {
+            SceneManager.SetActiveScene(newScene);
+        }
+        // 卸载主菜单场景
+        AsyncOperation unloadOp = SceneManager.UnloadSceneAsync(mainMenuSceneIndex);
+        while (!unloadOp.isDone)
+        {
+            yield return null;
+        }
     }
 
     /// <summary>
@@ -53,9 +105,35 @@ public class SceneLoader : MonoBehaviour
     /// </summary>
     public void ReturnToMainMenu()
     {
-        Debug.Log("SceneLoader: 返回主菜单");
-        SceneManager.LoadScene(mainMenuSceneIndex, LoadSceneMode.Single);
+        StartCoroutine(ReturnToMainMenuCoroutine());
+    }
 
+    private IEnumerator ReturnToMainMenuCoroutine()
+    {
+        // 卸载当前游戏场景
+        Scene currentGameScene = SceneManager.GetSceneByBuildIndex(demoSceneIndex);
+        if (currentGameScene.IsValid())
+        {
+            AsyncOperation unloadOp = SceneManager.UnloadSceneAsync(demoSceneIndex);
+            while (!unloadOp.isDone)
+            {
+                yield return null;
+            }
+        }
+
+        // 加载主菜单场景
+        AsyncOperation loadOp = SceneManager.LoadSceneAsync(mainMenuSceneIndex, LoadSceneMode.Additive);
+        while (!loadOp.isDone)
+        {
+            yield return null;
+        }
+
+        // 设置主菜单为活动场景
+        Scene mainMenuScene = SceneManager.GetSceneByBuildIndex(mainMenuSceneIndex);
+        if (mainMenuScene.IsValid())
+        {
+            SceneManager.SetActiveScene(mainMenuScene);
+        }
     }
 
     /// <summary>
@@ -65,38 +143,7 @@ public class SceneLoader : MonoBehaviour
     public void HandleEnding()
     {
         Debug.Log("SceneLoader: 处理游戏结局，返回主菜单");
-        // 暂时直接返回主菜单
         ReturnToMainMenu();
-    }
-
-    /// <summary>
-    /// 带过渡的场景加载协程
-    /// </summary>
-    private System.Collections.IEnumerator LoadSceneWithTransition(string unloadScene, string loadScene)
-    {
-        // 这里可以添加过渡动画逻辑
-        Debug.Log($"SceneLoader: 卸载场景 '{unloadScene}' 并加载场景 '{loadScene}'");
-
-        // 卸载当前场景
-        AsyncOperation unloadOp = UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(unloadScene);
-        while (!unloadOp.isDone)
-        {
-            yield return null;
-        }
-
-        // 加载新场景
-        AsyncOperation loadOp = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(loadScene, LoadSceneMode.Additive);
-        while (!loadOp.isDone)
-        {
-            yield return null;
-        }
-
-        // 设置新加载的场景为活动场景
-        Scene newScene = UnityEngine.SceneManagement.SceneManager.GetSceneByName(loadScene);
-        UnityEngine.SceneManagement.SceneManager.SetActiveScene(newScene);
-
-        // 这里可以结束过渡动画逻辑
-        Debug.Log($"SceneLoader: 场景 '{loadScene}' 加载完成");
     }
 
     /// <summary>
@@ -104,8 +151,28 @@ public class SceneLoader : MonoBehaviour
     /// </summary>
     public void ReloadCurrentScene()
     {
-        Scene currentScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
-        Debug.Log($"SceneLoader: 重新加载当前场景 '{currentScene.name}'");
-        StartCoroutine(LoadSceneWithTransition(currentScene.name, currentScene.name));
+        Scene currentScene = SceneManager.GetActiveScene();
+        StartCoroutine(ReloadCurrentSceneCoroutine(currentScene));
+    }
+
+    private IEnumerator ReloadCurrentSceneCoroutine(Scene currentScene)
+    {
+        // 卸载当前场景
+        AsyncOperation unloadOp = SceneManager.UnloadSceneAsync(currentScene);
+        while (!unloadOp.isDone)
+        {
+            yield return null;
+        }
+
+        // 加载当前场景
+        AsyncOperation loadOp = SceneManager.LoadSceneAsync(currentScene.buildIndex, LoadSceneMode.Additive);
+        while (!loadOp.isDone)
+        {
+            yield return null;
+        }
+
+        // 设置新加载的场景为活动场景
+        Scene newScene = SceneManager.GetSceneByBuildIndex(currentScene.buildIndex);
+        SceneManager.SetActiveScene(newScene);
     }
 }
