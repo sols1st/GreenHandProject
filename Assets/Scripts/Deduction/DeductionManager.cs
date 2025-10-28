@@ -175,7 +175,8 @@ public class DeductionManager : MonoBehaviour
     public void ShowDeductionCanvas()
     {
         // todo 对话 
-        // DialogueManager.Instance.StartReasoningDialogue();  
+        DialogueManager.Instance.StartReasoningDialogue();
+        _isCutLine = false;
         AudioManager.Instance.PlayBackgroundMusic("B001");
         if (openCardBagButton.GetComponent<OpenCardBagButton>().IsOpen())
         {
@@ -210,6 +211,7 @@ public class DeductionManager : MonoBehaviour
         DisableAllInteractable();
         DeductionCanvas.SetActive(false);
         openCardBagButton.SetActive(true);
+       // SceneLoader.Instance.LoadNextChapterScene(); // todo 修改
     }
 
     // 更新选中的卡槽
@@ -218,7 +220,6 @@ public class DeductionManager : MonoBehaviour
         _selector = selector;
         _selectedCards[_selector.name] = null;
         string[] functions = null;
-        Debug.Log(selector.name);
         switch (selector.name)
         {
             case "Deduction1":
@@ -477,7 +478,7 @@ public class DeductionManager : MonoBehaviour
         }
         // todo 进入结局对话
         DeductionCanvas.SetActive(false);
-        // endingCanvas.SetActive(true);
+        endingCanvas.SetActive(true);
         DialogueManager.Instance.SwitchToEndingDialogue();
     }
 
@@ -525,7 +526,6 @@ public class DeductionManager : MonoBehaviour
     // todo 测试用
     public void EnterEnding(string ending)
     {
-        Debug.Log(_endings[ending]);
         SplitTextIntoParagraphs(_endings[ending]);
         DeductionCanvas.SetActive(false);
         endingCanvas.SetActive(true);
@@ -536,12 +536,10 @@ public class DeductionManager : MonoBehaviour
     {
         _paragraphs.Clear();
         var lines = text.Split('\n');
-        Debug.Log(lines.Length);
         var currentParagraph = "";
 
         foreach (var line in lines)
         {
-            Debug.Log(line);
             if (string.IsNullOrWhiteSpace(line))
             {
                 if (!string.IsNullOrWhiteSpace(currentParagraph))

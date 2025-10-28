@@ -6,7 +6,7 @@ public class LogicCard : Interactable
 {
     private Card _card;
     public Image image;
-    public TMP_Text text;
+    // public TMP_Text text;
     public Sprite defaultSprite;
     public override void TriggerOnClick()
     {
@@ -23,14 +23,14 @@ public class LogicCard : Interactable
         {
             // todo 加载图片
             // var imagePath = "CardTestFiles/Images" + card.image;
-            var imagePath = "Card/Images/逻辑卡";
+            var imagePath = "Card/CardImages/" + card.id;
             image.sprite = Resources.Load<Sprite>(imagePath);
-            text.text = card.name;
+            // text.text = card.name;
         }
         else
         {
             image.sprite = defaultSprite;
-            text.text = "";
+            // text.text = "";
         }
     }
 

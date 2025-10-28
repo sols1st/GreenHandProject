@@ -272,17 +272,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1132247545 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8110212781251002264, guid: 88ef1ee1854cf498ca9dcffe881a4a7e, type: 3}
-  m_PrefabInstance: {fileID: 3634053394285150232}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!224 &1162579718 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 6385858029576908274, guid: e3fa8a4e85e944362ad252f5a7d9b111, type: 3}
@@ -395,17 +384,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c964578a621994db2bef237a86b5b3e3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1662554223 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4457027737658554804, guid: f4dd81d30fbca43d38b9feedd2c74eab, type: 3}
-  m_PrefabInstance: {fileID: 4454517515026831970}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &1741658749 stripped
@@ -1483,6 +1461,18 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5249353694242439220, guid: e3fa8a4e85e944362ad252f5a7d9b111, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5249353694242439220, guid: e3fa8a4e85e944362ad252f5a7d9b111, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5249353694242439220, guid: e3fa8a4e85e944362ad252f5a7d9b111, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1842,7 +1832,7 @@ PrefabInstance:
     - target: {fileID: 3800708661604526470, guid: ffe4619a912f0490690fe1af57fa569c, type: 3}
       propertyPath: newCardName
       value: 
-      objectReference: {fileID: 1662554223}
+      objectReference: {fileID: 0}
     - target: {fileID: 3800708661604526470, guid: ffe4619a912f0490690fe1af57fa569c, type: 3}
       propertyPath: endingCanvas
       value: 
@@ -1858,7 +1848,7 @@ PrefabInstance:
     - target: {fileID: 3800708661604526470, guid: ffe4619a912f0490690fe1af57fa569c, type: 3}
       propertyPath: cardDetailName
       value: 
-      objectReference: {fileID: 1132247545}
+      objectReference: {fileID: 0}
     - target: {fileID: 3800708661604526470, guid: ffe4619a912f0490690fe1af57fa569c, type: 3}
       propertyPath: cardDetailImage
       value: 

@@ -71,6 +71,7 @@ public class CardManager : MonoBehaviour
                 // todo 测试使用
                 // var testCards = new List<string> { "CA016", "CA020", "CA010", "CA019", "CA028", "CA033"};
                 // if (testCards.Contains(card.id)) card.isGot = true;
+                card.isGot = true;
                 _allCards.Add(card.id, card);
             }
         }
@@ -197,10 +198,10 @@ public class CardManager : MonoBehaviour
         var card = _allCards[cardName];
         // todo 路径修改
         // var imagePath = "CardTestFiles/Images" + card.image;
-        var imagePath = "Card/Images/物品卡详情";
+        var imagePath = "Card/DetailImages/" + cardName;
         var image = Resources.Load<Sprite>(imagePath);
         newCardImage.sprite = image;
-        newCardName.text = card.name;
+        // newCardName.text = card.name;
         newCard.SetActive(true);
     }
 
@@ -290,13 +291,13 @@ public class CardManager : MonoBehaviour
     
     public void ShowCardDetail(string cardID)
     {
-        var card = _allCards[cardID];
+        // var card = _allCards[cardID];
         // todo 路径修改、详情UI修改
         // var imagePath = "CardTestFiles/Images" + card.image;
-        var imagePath = "Card/Images/物品卡详情";
+        var imagePath = "Card/DetailImages/" + cardID;
         var image = Resources.Load<Sprite>(imagePath);
         cardDetailImage.sprite = image;
-        cardDetailName.text = card.name;
+        // cardDetailName.text = card.name;
         cardDetailCanvas.SetActive(true); 
     }
 
