@@ -477,8 +477,8 @@ public class DeductionManager : MonoBehaviour
         }
         // todo 进入结局对话
         DeductionCanvas.SetActive(false);
-        endingCanvas.SetActive(true);
-        // DialogueManager.Instance.SwitchToEndingDialogue();
+        // endingCanvas.SetActive(true);
+        DialogueManager.Instance.SwitchToEndingDialogue();
     }
 
     // 显示提示

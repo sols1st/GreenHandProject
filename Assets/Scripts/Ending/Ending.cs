@@ -21,7 +21,7 @@ public class Ending : Interactable
         if (currentParagraph == null)
         {
             gameObject.SetActive(false);
-            // DialogueManager.Instance.ContinueAfterBigPoster();
+            DialogueManager.Instance.ContinueAfterBigPoster();
         }
         else
         {
