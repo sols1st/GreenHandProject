@@ -71,6 +71,21 @@ public class SceneLoader : MonoBehaviour
     }
 
     /// <summary>
+    /// 卸载指定场景
+    /// </summary>
+    private IEnumerator UnloadSceneIfLoaded(int sceneIndex)
+    {
+        if (IsSceneLoaded(sceneIndex))
+        {
+            AsyncOperation unloadOp = SceneManager.UnloadSceneAsync(sceneIndex);
+            while (!unloadOp.isDone)
+            {
+                yield return null;
+            }
+        }
+    }
+
+    /// <summary>
     /// 从主菜单开始游戏
     /// </summary>
     public void StartGame()
@@ -80,6 +95,13 @@ public class SceneLoader : MonoBehaviour
 
     private IEnumerator StartGameCoroutine()
     {
+        // 卸载主菜单场景
+        AsyncOperation unloadOp = SceneManager.UnloadSceneAsync(mainMenuSceneIndex);
+        while (!unloadOp.isDone)
+        {
+            yield return null;
+        }
+        // 加载游戏场景
         AsyncOperation loadOp = SceneManager.LoadSceneAsync(demoSceneIndex, LoadSceneMode.Additive);
         while (!loadOp.isDone)
         {
@@ -90,12 +112,6 @@ public class SceneLoader : MonoBehaviour
         if (newScene.IsValid())
         {
             SceneManager.SetActiveScene(newScene);
-        }
-        // 卸载主菜单场景
-        AsyncOperation unloadOp = SceneManager.UnloadSceneAsync(mainMenuSceneIndex);
-        while (!unloadOp.isDone)
-        {
-            yield return null;
         }
     }
 
@@ -111,15 +127,7 @@ public class SceneLoader : MonoBehaviour
     private IEnumerator ReturnToMainMenuCoroutine()
     {
         // 卸载当前游戏场景
-        Scene currentGameScene = SceneManager.GetSceneByBuildIndex(demoSceneIndex);
-        if (currentGameScene.IsValid())
-        {
-            AsyncOperation unloadOp = SceneManager.UnloadSceneAsync(demoSceneIndex);
-            while (!unloadOp.isDone)
-            {
-                yield return null;
-            }
-        }
+        yield return StartCoroutine(UnloadSceneIfLoaded(demoSceneIndex));
 
         // 加载主菜单场景
         AsyncOperation loadOp = SceneManager.LoadSceneAsync(mainMenuSceneIndex, LoadSceneMode.Additive);
@@ -138,7 +146,7 @@ public class SceneLoader : MonoBehaviour
 
     /// <summary>
     /// 处理游戏结局
-    /// 在对话结束时调用
+    /// 在结局对话结束时调用
     /// </summary>
     public void HandleEnding()
     {
