@@ -100,12 +100,15 @@ public class SceneLoader : MonoBehaviour
     {
         // 卸载主菜单场景
         AsyncOperation unloadOp = SceneManager.UnloadSceneAsync(mainMenuSceneIndex);
+        unloadOp.allowSceneActivation = true;
         while (!unloadOp.isDone)
         {
             yield return null;
         }
         // 加载第一章场景
         AsyncOperation loadOp = SceneManager.LoadSceneAsync(chapterScene1Index, LoadSceneMode.Additive);
+        loadOp.allowSceneActivation = true;
+        loadOp.priority = 1;
         while (!loadOp.isDone)
         {
             yield return null;

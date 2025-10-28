@@ -65,6 +65,40 @@ public class DialogueUIManager
 
         string[] optionParts = choiceStr.Split(';');
 
+        bool hasVisibleOptions = false;// 是否有可见选项
+        for (int i = 0; i < Mathf.Min(optionParts.Length, 2); i++)
+        {
+            string[] optData = optionParts[i].Split(':');
+            if (optData.Length >= 2)
+            {
+                OptionData option = new OptionData
+                {
+                    OptionText = optData[0],
+                    TargetProcess = optData[1],
+                    RequireCard = optData.Length > 2 ? optData[2] : "",
+                    GainedCard = optData.Length > 3 ? optData[3] : ""
+                };
+
+                // 如果选项不需要卡牌，或者需要卡牌且玩家有，就说明有可显示的选项
+                if (!option.RequiresCard ||
+                    (CardManager.Instance != null && !string.IsNullOrEmpty(option.RequireCard) &&
+                     CardManager.Instance.HasCards(new string[] { option.RequireCard })))
+                {
+                    hasVisibleOptions = true;
+                    break;
+                }
+            }
+        }
+
+        if (!hasVisibleOptions)
+            {
+                Debug.Log("没有可用的选项，隐藏选项面板");
+                HideOptions();
+                return;
+            }
+
+        sceneUI.Panel_Options.SetActive(true);
+
         // 处理选项1
         if (optionParts.Length >= 1 && sceneUI.Button_Option1 != null)
         {
@@ -87,8 +121,6 @@ public class DialogueUIManager
 
     private void SetupOptionButton(GameObject buttonObject, string optionStr, int optionIndex)
     {
-        buttonObject.SetActive(true);
-
         string[] optData = optionStr.Split(':');
 
         if (optData.Length < 2)
@@ -106,6 +138,21 @@ public class DialogueUIManager
             RequireCard = optData.Length > 2 ? optData[2] : "",
             GainedCard = optData.Length > 3 ? optData[3] : ""
         };
+
+        //是否需要卡牌且玩家是否拥有
+        if (option.RequiresCard)
+        {
+            if (CardManager.Instance != null && !string.IsNullOrEmpty(option.RequireCard) &&
+        CardManager.Instance.HasCards(new string[] { option.RequireCard }))
+            {
+                buttonObject.SetActive(true);
+            }
+            else
+            {
+                buttonObject.SetActive(false);
+                return;
+            }
+        }
 
         // 设置按钮文本
         TMP_Text buttonText = optionIndex == 0 ? sceneUI.Text_Option1 : sceneUI.Text_Option2;
