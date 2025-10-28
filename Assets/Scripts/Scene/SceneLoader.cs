@@ -13,7 +13,10 @@ public class SceneLoader : MonoBehaviour
 
     [Header("场景配置")]
     public int mainMenuSceneIndex = 1;
-    public int demoSceneIndex = 2;
+    public int chapterScene1Index = 2;  // 第一章场景
+    public int chapterScene2Index = 3;  // 第二章场景
+    public int chapterScene3Index = 4;  // 第三章场景
+    public int chapterScene4Index = 5;  // 第四章场景
 
     private void Awake()
     {
@@ -101,14 +104,68 @@ public class SceneLoader : MonoBehaviour
         {
             yield return null;
         }
-        // 加载游戏场景
-        AsyncOperation loadOp = SceneManager.LoadSceneAsync(demoSceneIndex, LoadSceneMode.Additive);
+        // 加载第一章场景
+        AsyncOperation loadOp = SceneManager.LoadSceneAsync(chapterScene1Index, LoadSceneMode.Additive);
         while (!loadOp.isDone)
         {
             yield return null;
         }
         // 设置新场景为活动场景
-        Scene newScene = SceneManager.GetSceneByBuildIndex(demoSceneIndex);
+        Scene newScene = SceneManager.GetSceneByBuildIndex(chapterScene1Index);
+        if (newScene.IsValid())
+        {
+            SceneManager.SetActiveScene(newScene);
+        }
+    }
+
+    /// <summary>
+    /// 进入下一章场景
+    /// 在推理界面结束后调用
+    /// </summary>
+    public void LoadNextChapterScene()
+    {
+        Scene currentScene = SceneManager.GetActiveScene();
+        int currentSceneIndex = currentScene.buildIndex;
+
+        // 根据当前场景决定下一个场景
+        int nextSceneIndex = currentSceneIndex + 1;
+
+        // 检查下一个场景是否在有效范围内
+        if (nextSceneIndex <= chapterScene3Index)
+        {
+            StartCoroutine(LoadNextSceneCoroutine(currentSceneIndex, nextSceneIndex));
+        }
+
+        // 设置新场景为活动场景后触发对话
+        Scene newScene = SceneManager.GetSceneByBuildIndex(nextSceneIndex);
+        if (newScene.IsValid())
+        {
+            SceneManager.SetActiveScene(newScene);
+
+            // 根据场景索引触发对应对话
+            switch (nextSceneIndex)
+            {
+                case 2: DialogueManager.Instance.SwitchToMain1Dialogue(); break;
+                case 3: DialogueManager.Instance.SwitchToMain2Dialogue(); break;
+                case 4: DialogueManager.Instance.SwitchToMain3Dialogue(); break;
+            }
+        }
+    }
+
+    private IEnumerator LoadNextSceneCoroutine(int currentSceneIndex, int nextSceneIndex)
+    {
+        // 卸载当前场景
+        yield return StartCoroutine(UnloadSceneIfLoaded(currentSceneIndex));
+
+        // 加载下一个场景
+        AsyncOperation loadOp = SceneManager.LoadSceneAsync(nextSceneIndex, LoadSceneMode.Additive);
+        while (!loadOp.isDone)
+        {
+            yield return null;
+        }
+
+        // 设置新场景为活动场景
+        Scene newScene = SceneManager.GetSceneByBuildIndex(nextSceneIndex);
         if (newScene.IsValid())
         {
             SceneManager.SetActiveScene(newScene);
@@ -127,7 +184,8 @@ public class SceneLoader : MonoBehaviour
     private IEnumerator ReturnToMainMenuCoroutine()
     {
         // 卸载当前游戏场景
-        yield return StartCoroutine(UnloadSceneIfLoaded(demoSceneIndex));
+        Scene currentScene = SceneManager.GetActiveScene();
+        yield return StartCoroutine(UnloadSceneIfLoaded(currentScene.buildIndex));
 
         // 加载主菜单场景
         AsyncOperation loadOp = SceneManager.LoadSceneAsync(mainMenuSceneIndex, LoadSceneMode.Additive);

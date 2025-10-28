@@ -6,6 +6,7 @@ using System.IO;
 using TMPro;
 using System;
 using System.Net;
+using UnityEngine.SceneManagement;
 
 [System.Serializable]
 public class DialogueData 
@@ -37,9 +38,14 @@ public class DialogueManager : MonoBehaviour
     public static DialogueManager Instance;
 
     [Header("【对话CSV文件】")]
-    public TextAsset mainDialogueCSV; // 主线对话CSV
-    public TextAsset inquiryDialogueCSV; // 探索问询CSV
+    public TextAsset main1DialogueCSV; // 第一章主线对话
+    public TextAsset main2DialogueCSV; // 第二章主线对话  
+    public TextAsset main3DialogueCSV; // 第三章主线对话
+    public TextAsset inquiry1DialogueCSV; // 第一章问询对话
+    public TextAsset inquiry2DialogueCSV; // 第二章问询对话
+    public TextAsset inquiry3DialogueCSV; // 第三章问询对话
     public TextAsset endingDialogueCSV; // 结局对话CSV
+    public TextAsset reasoningDialogueCSV; // 推理界面对话CSV
 
     [Header("【配置项】")]
     public float typeSpeed = 0.05f; // 逐字显示速度
@@ -117,16 +123,16 @@ public class DialogueManager : MonoBehaviour
     void Start()
     {
         if (Instance != this) return;
-
+        Debug.Log("DialogueManager初始化完成，等待场景控制器触发对话");
         // 加载主线对话CSV
-        if (mainDialogueCSV != null)
-        {
-            LoadDialogueData(mainDialogueCSV);
-        }
-        else
-        {
-            Debug.LogError("主线对话CSV文件未分配");
-        }
+        //if (mainDialogueCSV != null)
+        //{
+        //    LoadDialogueData(mainDialogueCSV);
+        //}
+        //else
+        //{
+        //    Debug.LogError("主线对话CSV文件未分配");
+        //}
     }
 
     /// <summary>加载CSV数据</summary>
@@ -201,16 +207,16 @@ public class DialogueManager : MonoBehaviour
     }
 
     /// <summary>切换到主线对话</summary>
-    public void SwitchToMainDialogue()
-    {
-        LoadDialogueData(mainDialogueCSV);
-    }
+    //public void SwitchToMainDialogue()
+    //{
+    //    LoadDialogueData(mainDialogueCSV);
+    //}
 
     /// <summary>切换到问询对话</summary>
-    public void SwitchToInquiryDialogue()
-    {
-        LoadDialogueData(inquiryDialogueCSV);
-    }
+    //public void SwitchToInquiryDialogue()
+    //{
+    //    LoadDialogueData(inquiryDialogueCSV);
+    //}
 
     /// <summary>切换到结局对话</summary>
     public void SwitchToEndingDialogue()
@@ -218,6 +224,47 @@ public class DialogueManager : MonoBehaviour
         LoadDialogueData(endingDialogueCSV);
     }
 
+    /// <summary>切换到推理界面对话</summary>
+    public void SwitchToReasoningDialogue()
+    {
+        LoadDialogueData(reasoningDialogueCSV);
+    }
+
+    /// <summary>切换到第一个探索场景对话</summary>
+    public void SwitchToMain1Dialogue()
+    {
+        LoadDialogueData(main1DialogueCSV);
+    }
+
+    /// <summary>切换到第二个探索场景对话</summary>
+    public void SwitchToMain2Dialogue()
+    {
+        LoadDialogueData(main2DialogueCSV);
+    }
+
+    /// <summary>切换到第三个探索场景对话</summary>
+    public void SwitchToMain3Dialogue()
+    {
+        LoadDialogueData(main3DialogueCSV);
+    }
+
+    /// <summary>切换到第一章问询对话</summary>
+    public void SwitchToInquiry1Dialogue()
+    {
+        LoadDialogueData(inquiry1DialogueCSV);
+    }
+
+    /// <summary>切换到第二章问询对话</summary>
+    public void SwitchToInquiry2Dialogue()
+    {
+        LoadDialogueData(inquiry2DialogueCSV);
+    }
+
+    /// <summary>切换到第三章问询对话</summary>
+    public void SwitchToInquiry3Dialogue()
+    {
+        LoadDialogueData(inquiry3DialogueCSV);
+    }
 
     /// <summary>
     /// 显示当前对话
@@ -334,15 +381,6 @@ public class DialogueManager : MonoBehaviour
             case "U005"://大字报触发节点
                 uiManager.HideAllPanels();
                 uiManager.HideOptions();
-                //触发结局大字报显示
-                //if (CardManager.Instance != null)
-                //{
-                //    CardManager.Instance.ShowEnding();
-                //}
-                //else
-                //{
-                //    ContinueAfterBigPoster();
-                //}
                 break;
 
             default:
@@ -432,7 +470,7 @@ public class DialogueManager : MonoBehaviour
         currentOption = option;
 
         // 打开卡牌库选择界面
-        //CardBagManager.Instance.Open("Dialogue");
+        CardBagManager.Instance.Open("Dialogue");
     }
 
     /// <summary>
@@ -447,12 +485,26 @@ public class DialogueManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 启动指定NPC的问询对话
+    /// 启动指定NPC的问询对话（通过GameObject名称）
     /// </summary>
-    /// /// <param name="npcId">NPC的Character ID，对应CSV中的Character字段</param>
+    /// <param name="npcObjectName">NPC的GameObject名称，对应CSV中的Character字段</param>
     public void StartNPCDialogue(string npcId)
     {
-        SwitchToInquiryDialogue();
+        // 根据当前场景自动选择对应的问询对话文件
+        string currentScene = GetCurrentSceneId();
+
+        switch (currentScene)
+        {
+            case "S002": // 第一章场景
+                SwitchToInquiry1Dialogue();
+                break;
+            case "S003": // 第二章场景
+                SwitchToInquiry2Dialogue();
+                break;
+            case "S004": // 第三章场景
+                SwitchToInquiry3Dialogue();
+                break;
+        }
         int npcDialogueIndex = FindNPCFirstDialogue(npcId);
 
         if (npcDialogueIndex != -1)
@@ -462,7 +514,28 @@ public class DialogueManager : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning($"未找到NPC「{npcId}」的问询对话，请检查CSV文件！");
+            Debug.LogWarning($"未找到NPC「{npcId}」的问询对话！请检查：");
+        }
+    }
+
+    /// <summary>
+    /// 获取当前场景ID
+    /// </summary>
+    private string GetCurrentSceneId()
+    {
+        Scene currentScene = SceneManager.GetActiveScene();// 优先从活动场景判断
+        switch (currentScene.buildIndex)
+        {
+            case 2: return "S002"; // 第一章
+            case 3: return "S003"; // 第二章
+            case 4: return "S004"; // 第三章
+            default:
+                // 备用方案：从对话数据判断
+                if (dialogueList.Count > 0 && currentIndex < dialogueList.Count)
+                {
+                    return dialogueList[currentIndex].Scene;
+                }
+                return "Unknown";
         }
     }
 
@@ -489,7 +562,8 @@ public class DialogueManager : MonoBehaviour
     {
         if (!hasShownReasoningIntro)
         {
-            SwitchToMainDialogue();
+            //SwitchToMainDialogue();
+            SwitchToReasoningDialogue(); // 使用专门的推理对话文件
             int reasoningStartIndex = FindFirstProcessOfScene("S007");
 
             if (reasoningStartIndex != -1)
@@ -547,7 +621,7 @@ public class DialogueManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 切换背景
+    /// 处理对话背景
     /// </summary>
     private void ChangeBackground(string sceneId)
     {
@@ -721,18 +795,51 @@ public class DialogueManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 测试问询对话（直接按文件顺序）
+    /// 测试问询对话（根据当前场景）
     /// </summary>
     private void TestInquiryDialogue()
     {
-        if (inquiryDialogueCSV == null)
-        {
-            Debug.LogWarning("问询对话CSV文件未分配！");
-            return;
-        }
+        string currentScene = GetCurrentSceneId();
 
-        Debug.Log("切换到问询对话（测试模式）");
-        SwitchToInquiryDialogue();
+        switch (currentScene)
+        {
+            case "S002":
+                if (inquiry1DialogueCSV != null)
+                {
+                    Debug.Log("切换到第一章问询对话（测试模式）");
+                    SwitchToInquiry1Dialogue();
+                }
+                else
+                {
+                    Debug.LogWarning("第一章问询对话CSV文件未分配！");
+                }
+                break;
+            case "S003":
+                if (inquiry2DialogueCSV != null)
+                {
+                    Debug.Log("切换到第二章问询对话（测试模式）");
+                    SwitchToInquiry2Dialogue();
+                }
+                else
+                {
+                    Debug.LogWarning("第二章问询对话CSV文件未分配！");
+                }
+                break;
+            case "S004":
+                if (inquiry3DialogueCSV != null)
+                {
+                    Debug.Log("切换到第三章问询对话（测试模式）");
+                    SwitchToInquiry3Dialogue();
+                }
+                else
+                {
+                    Debug.LogWarning("第三章问询对话CSV文件未分配！");
+                }
+                break;
+            default:
+                Debug.LogWarning($"未知场景「{currentScene}」，无法测试问询对话");
+                break;
+        }
     }
 
     /// <summary>

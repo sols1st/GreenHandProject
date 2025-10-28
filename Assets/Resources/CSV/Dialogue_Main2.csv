@@ -1,0 +1,4 @@
+﻿Process,Scene,Character_IMGE,Character_Name,Text,UI,Choice,Next
+0_1,S003,C004,Ego,恭喜你来到第二阶段，离连接成功又近一步！,U002,,0_2
+0_2,S003,C001,,这里的线索是延续上一个空间的吗？,U002,,0_3
+0_3,S003,C004,Ego,当然会存在关联啦~<br>但推理阶段合成卡牌只能使用对应单个阶段的线索卡哦。,U002,,
