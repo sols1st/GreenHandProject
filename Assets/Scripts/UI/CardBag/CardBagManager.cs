@@ -58,7 +58,7 @@ public class CardBagManager : MonoBehaviour
         scrollRect.vertical = true;
         scrollRect.movementType = ScrollRect.MovementType.Clamped;
         scrollRect.inertia = true;
-        scrollRect.scrollSensitivity = 0.3f; // Unity默认值
+        scrollRect.scrollSensitivity = 3f; // Unity默认值
 
         // 设置ScrollRect的基本组件
         scrollRect.viewport = viewport;
