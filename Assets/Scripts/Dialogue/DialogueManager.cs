@@ -660,14 +660,44 @@ public class DialogueManager : MonoBehaviour
         }
         DialogueData currentData = dialogueList[currentIndex];
 
+        // 检查Next字段
+        if (string.IsNullOrEmpty(currentData.Next))
+        {
+            Debug.Log($"对话进程 {currentData.Process} 的Next为空，结束对话");
+            uiManager.HideAllPanels();
+            uiManager.HideOptions();
+            return;
+        }
+
         if (currentData.Next == "Ending")
         {
             Debug.Log($"触发结局处理: {currentData.Process}");
-            // 延迟两秒后返回主菜单
             StartCoroutine(DelayedEnding());
             return;
         }
-        currentIndex++;
+
+        // 解析Next字段，跳转到指定进程
+        if (!string.IsNullOrEmpty(currentData.Next))
+        {
+            // 查找目标进程的索引
+            for (int i = 0; i < dialogueList.Count; i++)
+            {
+                if (dialogueList[i].Process == currentData.Next)
+                {
+                    currentIndex = i;
+                    ShowCurrentDialogue();
+                    return;
+                }
+            }
+
+            // 如果找不到目标进程，使用递增索引作为后备
+            Debug.LogWarning($"未找到目标进程「{currentData.Next}」，使用索引递增");
+            currentIndex++;
+        }
+        else
+        {
+            currentIndex++;
+        }
         // 检查索引是否越界
         if (currentIndex >= dialogueList.Count)
         {
