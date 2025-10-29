@@ -61,7 +61,6 @@ public class DialogueUIManager
             HideOptions();
             return;
         }
-        sceneUI.Panel_Options.SetActive(true);
 
         string[] optionParts = choiceStr.Split(';');
 
@@ -78,6 +77,18 @@ public class DialogueUIManager
                     RequireCard = optData.Length > 2 ? optData[2] : "",
                     GainedCard = optData.Length > 3 ? optData[3] : ""
                 };
+
+                bool hasGainedCard = false;
+                if (!string.IsNullOrEmpty(option.GainedCard) && CardManager.Instance != null)
+                {
+                    hasGainedCard = CardManager.Instance.HasCards(new string[] { option.GainedCard });
+                }
+
+                if (hasGainedCard)
+                {
+                    Debug.Log($"选项 {i + 1} 已获得相关卡牌 {option.GainedCard}，跳过显示");
+                    continue;
+                }
 
                 // 如果选项不需要卡牌，或者需要卡牌且玩家有，就说明有可显示的选项
                 if (!option.RequiresCard ||
@@ -144,6 +155,18 @@ public class DialogueUIManager
             RequireCard = optData.Length > 2 ? optData[2] : "",
             GainedCard = optData.Length > 3 ? optData[3] : ""
         };
+
+        bool hasGainedCard = false;
+        if (!string.IsNullOrEmpty(option.GainedCard) && CardManager.Instance != null)
+        {
+            hasGainedCard = CardManager.Instance.HasCards(new string[] { option.GainedCard });
+        }
+
+        if (hasGainedCard) 
+        {
+            buttonObject.SetActive(false);
+            return;
+        }
 
         //是否需要卡牌且玩家是否拥有
         if (option.RequiresCard)

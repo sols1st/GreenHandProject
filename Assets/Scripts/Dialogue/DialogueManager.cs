@@ -257,9 +257,15 @@ public class DialogueManager : MonoBehaviour
             Debug.Log("对话列表已结束！");
             uiManager.HideAllPanels();
             uiManager.HideOptions();
+            if (CursorManager.Instance != null)
+                CursorManager.Instance.EnableCustomCursor();
             return;
         }
         DialogueData currentData = dialogueList[currentIndex];
+
+        // 显示对话时禁用自定义光标，恢复系统光标
+        if (CursorManager.Instance != null)
+            CursorManager.Instance.DisableCustomCursor();
 
         if (currentData.Next == "Ending")
         {
@@ -335,6 +341,7 @@ public class DialogueManager : MonoBehaviour
                 break;
 
             case "U004": // 带选项：当前面板+选项
+                         // 确保在显示选项前正确设置对话框
                 if (string.IsNullOrEmpty(currentData.Character) && string.IsNullOrEmpty(currentData.Character_Name))
                 {
                     uiManager.ShowNarrationPanel();
@@ -354,6 +361,8 @@ public class DialogueManager : MonoBehaviour
                     LoadSpriteToImage(currentSceneUI.Image_MinorAvatar, avatarResPath + currentData.Character);
                     textDisplayController.StartTypingEffect(currentSceneUI.Text_MinorDialogue, currentData.Text, typeSpeed);
                 }
+
+                // 显示选项（在文本显示完成后）
                 if (!string.IsNullOrEmpty(currentData.Choice))
                 {
                     uiManager.ShowOptions(currentData.Choice);
@@ -684,6 +693,9 @@ public class DialogueManager : MonoBehaviour
         {
             uiManager.HideAllPanels();
             uiManager.HideOptions();
+            // 对话完全结束时恢复自定义光标
+            if (CursorManager.Instance != null)
+                CursorManager.Instance.EnableCustomCursor();
             return;
         }
 
