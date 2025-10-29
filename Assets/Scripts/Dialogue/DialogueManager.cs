@@ -685,7 +685,16 @@ public class DialogueManager : MonoBehaviour
         // 检查是否有选项 - 如果有选项，不自动继续，等待玩家选择
         if (!string.IsNullOrEmpty(currentData.Choice))
         {
-            return;
+            if (currentSceneUI.Panel_Options != null && currentSceneUI.Panel_Options.activeSelf)
+            {
+                return;
+            }
+            else
+            {
+                uiManager.HideAllPanels();
+                uiManager.HideOptions();
+                return;
+            }
         }
 
         // 只有当选项字段和Next字段均为空时才结束对话
