@@ -1506,7 +1506,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8555842842423488672, guid: 9886a1713b172cd4c95235f47a834585, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1522,9 +1522,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1212511507}
-  - component: {fileID: 1212511509}
-  - component: {fileID: 1212511510}
   - component: {fileID: 1212511508}
+  - component: {fileID: 1212511509}
   m_Layer: 6
   m_Name: CA028
   m_TagString: Untagged
@@ -1610,21 +1609,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1212511506}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2958d41a083dfd647a437c7274fe6657, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isInteractable: 1
-  isHover: 1
---- !u!114 &1212511510
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1212511506}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b2268adac2072d1439540d7c0318be53, type: 3}
+  m_Script: {fileID: 11500000, guid: 067e626ef540c784b8a816b0b490f7d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   isInteractable: 1
@@ -2342,7 +2327,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2147239024}
-  - component: {fileID: 2147239026}
   - component: {fileID: 2147239025}
   - component: {fileID: 2147239027}
   m_Layer: 6
@@ -2437,20 +2421,6 @@ PolygonCollider2D:
       - {x: 3.5696445, y: -3.0732753}
       - {x: 3.0970945, y: -2.451684}
   m_UseDelaunayMesh: 0
---- !u!114 &2147239026
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2147239023}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2958d41a083dfd647a437c7274fe6657, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isInteractable: 1
-  isHover: 1
 --- !u!114 &2147239027
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2460,7 +2430,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2147239023}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b2268adac2072d1439540d7c0318be53, type: 3}
+  m_Script: {fileID: 11500000, guid: 067e626ef540c784b8a816b0b490f7d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   isInteractable: 1
