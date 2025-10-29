@@ -161,7 +161,7 @@ public class SceneLoader : MonoBehaviour
     }
     #endregion
 
-    #region 场景切换方法 - 保持原有顺序
+    #region 场景切换方法
     private IEnumerator LoadMainMenuCoroutine()
     {
         AsyncOperation loadOp = SceneManager.LoadSceneAsync(mainMenuSceneIndex, LoadSceneMode.Additive);
@@ -188,9 +188,10 @@ public class SceneLoader : MonoBehaviour
     private IEnumerator StartGameCoroutine()
     {
         SetTransitionCamera(true);
+        yield return null;
         yield return StartCoroutine(FadeIn());
 
-        // 保持原有顺序：先卸载后加载
+        // 先卸载后加载
         AsyncOperation unloadOp = SceneManager.UnloadSceneAsync(mainMenuSceneIndex);
         while (!unloadOp.isDone)
         {
