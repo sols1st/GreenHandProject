@@ -102,8 +102,8 @@ public class CardBagManager : MonoBehaviour
                 if (cardPanel.activeSelf)
                 {
                     openCardBagButton.GetComponent<OpenCardBagButton>().TriggerOnClick();
-                    openCardBagButton.SetActive(false);
                 }
+                openCardBagButton.SetActive(false);
             }
             cardBagBackground.SetActive(true);
             if (useCard != null) useCard.SetActive(true);
@@ -158,6 +158,7 @@ public class CardBagManager : MonoBehaviour
                 openCardBagButton.SetActive(true);
                 break;
         }
+        _openMode =  "default";
         _selectedCard = null;
         _selectedItem?.UpdateBackground();
         _selectedItem = null;
