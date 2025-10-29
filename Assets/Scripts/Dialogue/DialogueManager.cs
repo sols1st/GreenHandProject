@@ -197,18 +197,6 @@ public class DialogueManager : MonoBehaviour
         ShowCurrentDialogue();
     }
 
-    /// <summary>切换到主线对话</summary>
-    //public void SwitchToMainDialogue()
-    //{
-    //    LoadDialogueData(mainDialogueCSV);
-    //}
-
-    /// <summary>切换到问询对话</summary>
-    //public void SwitchToInquiryDialogue()
-    //{
-    //    LoadDialogueData(inquiryDialogueCSV);
-    //}
-
     /// <summary>切换到结局对话</summary>
     public void SwitchToEndingDialogue()
     {
