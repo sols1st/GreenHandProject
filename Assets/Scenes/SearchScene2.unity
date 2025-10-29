@@ -1284,8 +1284,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1255026743}
-  - component: {fileID: 1255026745}
   - component: {fileID: 1255026744}
+  - component: {fileID: 1255026745}
   m_Layer: 6
   m_Name: CA016
   m_TagString: Untagged
@@ -1384,11 +1384,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1255026742}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2958d41a083dfd647a437c7274fe6657, type: 3}
+  m_Script: {fileID: 11500000, guid: 067e626ef540c784b8a816b0b490f7d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   isInteractable: 1
   isHover: 1
+  npcName: C777
 --- !u!1001 &1284490593
 PrefabInstance:
   m_ObjectHideFlags: 0
