@@ -841,12 +841,6 @@ public class DialogueManager : MonoBehaviour
         {
             JumpToLastProcess();
         }
-
-        // F3键切换结局对话（测试用）
-        if (Input.GetKeyDown(KeyCode.F3))
-        {
-            TestEndingDialogue();
-        }
     }
 
     /// <summary>
@@ -883,20 +877,5 @@ public class DialogueManager : MonoBehaviour
 
         currentIndex = dialogueList.Count - 1;
         ShowCurrentDialogue();
-    }
-
-    /// <summary>
-    /// 测试结局对话（测试用）
-    /// </summary>
-    private void TestEndingDialogue()
-    {
-        if (endingDialogueCSV == null)
-        {
-            Debug.LogWarning("结局对话CSV文件未分配！");
-            return;
-        }
-
-        Debug.Log("切换到结局对话（测试模式）");
-        SwitchToEndingDialogue();
     }
 }
