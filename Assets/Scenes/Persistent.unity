@@ -145,38 +145,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 501612409900884312, guid: 134591b7c539d254c933e1289359af09, type: 3}
-      propertyPath: main1DialogueCSV
-      value: 
-      objectReference: {fileID: 4900000, guid: 76821419915fee14c94bf39f451b03a4, type: 3}
-    - target: {fileID: 501612409900884312, guid: 134591b7c539d254c933e1289359af09, type: 3}
-      propertyPath: main2DialogueCSV
-      value: 
-      objectReference: {fileID: 4900000, guid: c132aaae2abd97c49a05fdf21e884dc9, type: 3}
-    - target: {fileID: 501612409900884312, guid: 134591b7c539d254c933e1289359af09, type: 3}
-      propertyPath: main3DialogueCSV
-      value: 
-      objectReference: {fileID: 4900000, guid: d972bddbcbe08034ba0f5a50e715bc11, type: 3}
-    - target: {fileID: 501612409900884312, guid: 134591b7c539d254c933e1289359af09, type: 3}
-      propertyPath: gameEndCanvasPrefab
-      value: 
-      objectReference: {fileID: 7052157215426076553, guid: 598012ed5b241b149983fa35b7cd3880, type: 3}
-    - target: {fileID: 501612409900884312, guid: 134591b7c539d254c933e1289359af09, type: 3}
-      propertyPath: inquiry1DialogueCSV
-      value: 
-      objectReference: {fileID: 4900000, guid: 13530b85c5f1ca247a06b1b718b89bb9, type: 3}
-    - target: {fileID: 501612409900884312, guid: 134591b7c539d254c933e1289359af09, type: 3}
-      propertyPath: inquiry2DialogueCSV
-      value: 
-      objectReference: {fileID: 4900000, guid: b2c39109a0d55fb4bb16c3cc05ffb44c, type: 3}
-    - target: {fileID: 501612409900884312, guid: 134591b7c539d254c933e1289359af09, type: 3}
-      propertyPath: inquiry3DialogueCSV
-      value: 
-      objectReference: {fileID: 4900000, guid: 530487ead506c1046b72bbbc89898655, type: 3}
-    - target: {fileID: 501612409900884312, guid: 134591b7c539d254c933e1289359af09, type: 3}
-      propertyPath: reasoningDialogueCSV
-      value: 
-      objectReference: {fileID: 4900000, guid: 93de7b3b873349949a910f79389cac4c, type: 3}
     - target: {fileID: 4633863725601945092, guid: 134591b7c539d254c933e1289359af09, type: 3}
       propertyPath: m_Name
       value: DialogueManager
@@ -377,14 +345,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: SceneLoader
       objectReference: {fileID: 0}
-    - target: {fileID: 3291800021908450657, guid: 6e3a2089239192f4d82e23d8ca7e4b9b, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6452155405286393234, guid: 6e3a2089239192f4d82e23d8ca7e4b9b, type: 3}
-      propertyPath: fadeDuration
-      value: 0.1
-      objectReference: {fileID: 0}
     - target: {fileID: 6452155405286393234, guid: 6e3a2089239192f4d82e23d8ca7e4b9b, type: 3}
       propertyPath: transitionImage
       value: 
@@ -393,14 +353,6 @@ PrefabInstance:
       propertyPath: transitionCamera
       value: 
       objectReference: {fileID: 2115843532}
-    - target: {fileID: 6452155405286393234, guid: 6e3a2089239192f4d82e23d8ca7e4b9b, type: 3}
-      propertyPath: transitionOverlay
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 6452155405286393234, guid: 6e3a2089239192f4d82e23d8ca7e4b9b, type: 3}
-      propertyPath: mainMenuSceneIndex
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

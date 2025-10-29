@@ -45,4 +45,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mainMenuSceneIndex: 1
-  demoSceneIndex: 2
+  chapterScene1Index: 2
+  chapterScene2Index: 3
+  chapterScene3Index: 4
+  chapterScene4Index: 5
+  transitionImage: {fileID: 0}
+  transitionCamera: {fileID: 0}
+  fadeDuration: 0.1

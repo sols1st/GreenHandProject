@@ -44,12 +44,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 562b8127bae5d8e4cb5b45678770ee4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainDialogueCSV: {fileID: 4900000, guid: d24caeb245c6dd3418156ac6327ae8c3, type: 3}
-  inquiryDialogueCSV: {fileID: 4900000, guid: 202723ba277f23040be2581e49dd2f0d, type: 3}
+  main1DialogueCSV: {fileID: 4900000, guid: 76821419915fee14c94bf39f451b03a4, type: 3}
+  main2DialogueCSV: {fileID: 4900000, guid: c132aaae2abd97c49a05fdf21e884dc9, type: 3}
+  main3DialogueCSV: {fileID: 4900000, guid: d972bddbcbe08034ba0f5a50e715bc11, type: 3}
+  inquiry1DialogueCSV: {fileID: 4900000, guid: 13530b85c5f1ca247a06b1b718b89bb9, type: 3}
+  inquiry2DialogueCSV: {fileID: 4900000, guid: b2c39109a0d55fb4bb16c3cc05ffb44c, type: 3}
+  inquiry3DialogueCSV: {fileID: 4900000, guid: 530487ead506c1046b72bbbc89898655, type: 3}
   endingDialogueCSV: {fileID: 4900000, guid: aa60b56515015b3478000a49a9314de7, type: 3}
+  reasoningDialogueCSV: {fileID: 4900000, guid: 93de7b3b873349949a910f79389cac4c, type: 3}
   typeSpeed: 0.05
   portraitResPath: Dialogue/Portraits/
   avatarResPath: Dialogue/Avatars/
   backgroundResPath: Background/
+  gameEndCanvasPrefab: {fileID: 7052157215426076553, guid: 598012ed5b241b149983fa35b7cd3880, type: 3}
   dialogueList: []
   currentIndex: 0
