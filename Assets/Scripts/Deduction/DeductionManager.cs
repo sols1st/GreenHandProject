@@ -208,12 +208,30 @@ public class DeductionManager : MonoBehaviour
     // 退出推理画布
     public void CloseDeductionCanvas()
     {
-        powerTab.SetActive(true);
-        DisableAllInteractable();
-        DeductionCanvas.SetActive(false);
-        openCardBagButton.SetActive(true);
-        SceneLoader.Instance.LoadNextChapterScene(); // todo 修改
+        if (_chapter == 1 || _chapter == 2)
+        {
+            powerTab.SetActive(true);
+            DisableAllInteractable();
+            DeductionCanvas.SetActive(false);
+            openCardBagButton.SetActive(true);
+            SceneLoader.Instance.LoadNextChapterScene(); // todo 修改
+        }
+        else if( _chapter == 3)
+        {
+            EnterFinalDeduction();
+        }
     }
+
+    public void EnterFinalDeduction()
+    {
+        UpdateChapter(4);
+        ShowDeductionCanvas();
+    }
+
+    /// <summary>
+    /// 延迟调用EnterFinalDeduction
+    /// </summary>
+    /// <param name="delaySeconds">延迟时间（秒）</param>
 
     // 更新选中的卡槽
     public void UpdateSelector(GameObject selector)

@@ -179,6 +179,13 @@ public class CardManager : MonoBehaviour
                 ShowEndChoice();
             }
         }
+        else if(_currentChapter == 3)
+        {
+            if (HasCards(new [] {"CA028", "CA033"}))
+            {
+                ShowEndChoice();
+            }
+        }
     }
 
     public void ShowEndChoice()
