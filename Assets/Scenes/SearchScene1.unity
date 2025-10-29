@@ -2027,7 +2027,7 @@ GameObject:
   - component: {fileID: 2138052944}
   - component: {fileID: 2138052943}
   m_Layer: 0
-  m_Name: Cursor
+  m_Name: Initialize
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2045,6 +2045,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2be0b69e9c92484f893f38536263dbc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  bgmName: B002(1)
 --- !u!4 &2138052944
 Transform:
   m_ObjectHideFlags: 0
