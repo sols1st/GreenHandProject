@@ -75,11 +75,17 @@ public class DeductionManager : MonoBehaviour
     // 加载结局数据
     private void LoadEndingFromFile()
     {
-        var path = Path.Combine(Application.dataPath, "Resources/Ending/Ending.csv");
+        // 使用Resources.Load安全加载文件
+        var textAsset = Resources.Load<TextAsset>("Ending/Ending");
+        if (textAsset == null)
+        {
+            Debug.LogError("DeductionManager: 无法加载Ending.csv文件，请检查文件是否在Resources/Ending/目录下");
+            return;
+        }
 
         // 清空现有数据
         _endings.Clear();
-        var allLines = File.ReadAllText(path);
+        var allLines = textAsset.text;
         var lines = ParseCsvWithLineBreaks(allLines);
 
         // 跳过标题行，从第二行开始处理

@@ -38,11 +38,17 @@ public class CardManager : MonoBehaviour
     // 加载卡牌数据
     private void LoadCardFromFile()
     {
-        var path = Path.Combine(Application.dataPath, "Resources/Card/CardData.csv");
+        // 使用Resources.Load安全加载文件
+        var textAsset = Resources.Load<TextAsset>("Card/CardData");
+        if (textAsset == null)
+        {
+            Debug.LogError("CardManager: 无法加载CardData.csv文件，请检查文件是否在Resources/Card/目录下");
+            return;
+        }
 
         // 清空现有数据
         _allCards.Clear();
-        var allContent = File.ReadAllText(path);
+        var allContent = textAsset.text;
         var csvLines = ParseCsvWithLineBreaks(allContent);
 
         // 跳过标题行，从第二行开始处理
