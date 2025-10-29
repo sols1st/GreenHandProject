@@ -53,6 +53,10 @@ public class DialogueManager : MonoBehaviour
     public string avatarResPath = "Avatars/";   // 次要角色头像资源路径
     public string backgroundResPath = "Background/"; // 背景资源路径
 
+    [Header("【游戏结束界面】")]
+    public GameObject gameEndCanvasPrefab;
+    private GameObject gameEndCanvasInstance; // 游戏结束Canvas实例
+
     internal SceneDialogueUI currentSceneUI; // 当前场景的UI控制器
 
     public List<DialogueData> dialogueList = new List<DialogueData>(); // 对话数据列表
@@ -755,7 +759,35 @@ public class DialogueManager : MonoBehaviour
         uiManager.HideAllPanels();
         uiManager.HideOptions();
         yield return new WaitForSeconds(2.0f);
-        SceneLoader.Instance.HandleEnding();
+        //SceneLoader.Instance.HandleEnding();
+        ShowGameEndCanvas();
+    }
+
+    /// <summary>
+    /// 显示游戏结束界面
+    /// </summary>
+    private void ShowGameEndCanvas()
+    {
+        if (gameEndCanvasPrefab != null)
+        {
+            // 直接创建并显示实例
+            gameEndCanvasInstance = Instantiate(gameEndCanvasPrefab);
+        }
+        else
+        {
+            ExitGame();
+        }
+    }
+
+    private void ExitGame()
+    {
+        Debug.Log("退出游戏");
+
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
     }
 
     /// <summary>
@@ -809,12 +841,6 @@ public class DialogueManager : MonoBehaviour
         {
             JumpToLastProcess();
         }
-
-        // F3键切换结局对话（测试用）
-        if (Input.GetKeyDown(KeyCode.F3))
-        {
-            TestEndingDialogue();
-        }
     }
 
     /// <summary>
@@ -851,20 +877,5 @@ public class DialogueManager : MonoBehaviour
 
         currentIndex = dialogueList.Count - 1;
         ShowCurrentDialogue();
-    }
-
-    /// <summary>
-    /// 测试结局对话（测试用）
-    /// </summary>
-    private void TestEndingDialogue()
-    {
-        if (endingDialogueCSV == null)
-        {
-            Debug.LogWarning("结局对话CSV文件未分配！");
-            return;
-        }
-
-        Debug.Log("切换到结局对话（测试模式）");
-        SwitchToEndingDialogue();
     }
 }
