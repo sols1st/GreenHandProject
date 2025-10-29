@@ -249,6 +249,11 @@ public class CursorManager : MonoBehaviour
         var pointerPosition = Mouse.current != null && Mouse.current.position.ReadValue() != default
             ? Mouse.current.position.ReadValue()
             : Vector2.zero;
+
+        // 检查是否在屏幕范围内
+        if (pointerPosition.x < 0 || pointerPosition.x > Screen.width ||
+            pointerPosition.y < 0 || pointerPosition.y > Screen.height)
+            return null;
         // HandleMouseClick(pointerPosition);
         var interactable = DetectCanvasUIGO(pointerPosition);
         if (interactable != null)
