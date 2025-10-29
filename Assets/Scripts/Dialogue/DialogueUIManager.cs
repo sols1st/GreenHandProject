@@ -101,20 +101,6 @@ public class DialogueUIManager
             }
         }
 
-        bool hasAnyActiveOption = false;
-        int activeOptionCount = 0;
-
-        if (sceneUI.Button_Option1 != null && sceneUI.Button_Option1.gameObject.activeSelf)
-        {
-            hasAnyActiveOption = true;
-            activeOptionCount++;
-        }
-        if (sceneUI.Button_Option2 != null && sceneUI.Button_Option2.gameObject.activeSelf)
-        {
-            hasAnyActiveOption = true;
-            activeOptionCount++;
-        }
-
         if (!hasVisibleOptions)
             {
                 Debug.Log("没有可用的选项，隐藏选项面板");

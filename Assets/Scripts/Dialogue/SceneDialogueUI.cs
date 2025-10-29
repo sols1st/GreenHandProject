@@ -38,7 +38,7 @@ public class SceneDialogueUI : MonoBehaviour
 
     void Start()
     {
-        RegisterUIWithDialogueManager();
+            RegisterUIWithDialogueManager();
     }
 
     private void OnDestroy()
@@ -51,7 +51,14 @@ public class SceneDialogueUI : MonoBehaviour
     /// </summary>
     private void RegisterUIWithDialogueManager()
     {
-        DialogueManager.Instance.RegisterSceneUI(this);
+        if (DialogueManager.Instance != null)
+        {
+            DialogueManager.Instance.RegisterSceneUI(this);
+        }
+        else
+        {
+            Debug.LogError("DialogueManager.Instance 为 null，无法注册场景UI");
+        }
     }
 
     /// <summary>

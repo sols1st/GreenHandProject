@@ -91,11 +91,6 @@ public class DialogueManager : MonoBehaviour
     {
         currentSceneUI = sceneUI;
         uiManager = new DialogueUIManager(sceneUI);
-        // 如果有等待中的对话，立即显示
-        if (dialogueList.Count > 0 && currentIndex < dialogueList.Count)
-        {
-            ShowCurrentDialogue();
-        }
     }
 
     /// <summary>注销当前场景的UI组件</summary>
@@ -598,6 +593,7 @@ public class DialogueManager : MonoBehaviour
             {
                 Debug.LogError("未找到S007场景的对话数据！");
             }
+            return;
         }
     }
 
@@ -802,25 +798,19 @@ public class DialogueManager : MonoBehaviour
     /// </summary>
     private void HandleShortcuts()
     {
-        // 1. 空格键切换对话（同鼠标左键点击）
+        // 空格键切换对话（同鼠标左键点击）
         if (Input.GetKeyDown(KeyCode.Space))
         {
             TriggerDialogueAdvance();
         }
 
-        // 2. F1键直接跳转到当前对话的最后一个进程（测试用）
+        // F1键直接跳转到当前对话的最后一个进程（测试用）
         if (Input.GetKeyDown(KeyCode.F1))
         {
             JumpToLastProcess();
         }
 
-        // 3. F2键切换直接测试问询对话
-        if (Input.GetKeyDown(KeyCode.F2))
-        {
-            TestInquiryDialogue();
-        }
-
-        // 4. F3键切换结局对话（测试用）
+        // F3键切换结局对话（测试用）
         if (Input.GetKeyDown(KeyCode.F3))
         {
             TestEndingDialogue();
@@ -864,55 +854,7 @@ public class DialogueManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 测试问询对话（根据当前场景）
-    /// </summary>
-    private void TestInquiryDialogue()
-    {
-        string currentScene = GetCurrentSceneId();
-
-        switch (currentScene)
-        {
-            case "S002":
-                if (inquiry1DialogueCSV != null)
-                {
-                    Debug.Log("切换到第一章问询对话（测试模式）");
-                    SwitchToInquiry1Dialogue();
-                }
-                else
-                {
-                    Debug.LogWarning("第一章问询对话CSV文件未分配！");
-                }
-                break;
-            case "S003":
-                if (inquiry2DialogueCSV != null)
-                {
-                    Debug.Log("切换到第二章问询对话（测试模式）");
-                    SwitchToInquiry2Dialogue();
-                }
-                else
-                {
-                    Debug.LogWarning("第二章问询对话CSV文件未分配！");
-                }
-                break;
-            case "S004":
-                if (inquiry3DialogueCSV != null)
-                {
-                    Debug.Log("切换到第三章问询对话（测试模式）");
-                    SwitchToInquiry3Dialogue();
-                }
-                else
-                {
-                    Debug.LogWarning("第三章问询对话CSV文件未分配！");
-                }
-                break;
-            default:
-                Debug.LogWarning($"未知场景「{currentScene}」，无法测试问询对话");
-                break;
-        }
-    }
-
-    /// <summary>
-    /// 测试结局对话
+    /// 测试结局对话（测试用）
     /// </summary>
     private void TestEndingDialogue()
     {
