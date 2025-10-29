@@ -221,6 +221,7 @@ public class DeductionManager : MonoBehaviour
         _selector = selector;
         _selectedCards[_selector.name] = null;
         string[] functions = null;
+        knife.SetActive(false);
         switch (selector.name)
         {
             case "Deduction1":

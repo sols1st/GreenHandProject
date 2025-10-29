@@ -340,7 +340,7 @@ GameObject:
   - component: {fileID: 618359812}
   - component: {fileID: 618359811}
   m_Layer: 6
-  m_Name: C010
+  m_Name: C014
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1117,12 +1117,12 @@ GameObject:
   - component: {fileID: 1105767075}
   - component: {fileID: 1105767074}
   m_Layer: 6
-  m_Name: "\u80E1\u6C38\uFF0C\u4E2D\u5E74\u674E\u7231\u8587"
+  m_Name: C024
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1105767073
 Transform:
   m_ObjectHideFlags: 0
@@ -2617,7 +2617,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a58803f409b1d049b9a4687dc673691, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 50
+  moveSpeed: 30
 --- !u!1 &4015218966124991014
 GameObject:
   m_ObjectHideFlags: 0
@@ -2937,5 +2937,5 @@ SceneRoots:
   - {fileID: 6065322734215311215}
   - {fileID: 732972632}
   - {fileID: 5292147061288979883}
-  - {fileID: 1199588952}
   - {fileID: 207569523}
+  - {fileID: 1199588952}
