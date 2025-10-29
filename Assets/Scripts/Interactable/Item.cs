@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Item : Interactable
@@ -12,8 +13,8 @@ public class Item : Interactable
         string[] cardsToCheck = { cardName };
         if (!CardManager.Instance.HasCards(cardsToCheck))
         {
-            Debug.Log($"ø®∆¨ {cardName} ±ªªÒ»°£°");
             CardManager.Instance.GetNewCard(cardName);
+            isHover = false; 
         }
         else
         {

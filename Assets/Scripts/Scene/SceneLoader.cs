@@ -1,28 +1,30 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 /// <summary>
-/// ³¡¾°¼ÓÔØÆ÷ - ¸ºÔğ¹ÜÀí³¡¾°ÇĞ»»Âß¼­
-/// Ê¹ÓÃµ¥ÀıÄ£Ê½£¬¿ç³¡¾°²»Ïú»Ù
+/// åœºæ™¯åŠ è½½å™¨ - è´Ÿè´£ç®¡ç†åœºæ™¯åˆ‡æ¢é€»è¾‘
+/// ä½¿ç”¨å•ä¾‹æ¨¡å¼ï¼Œè·¨åœºæ™¯ä¸é”€æ¯
 /// </summary>
 public class SceneLoader : MonoBehaviour
 {
     public static SceneLoader Instance;
+    private bool isTransitioning = false;
 
-    [Header("³¡¾°ÅäÖÃ")]
+    [Header("åœºæ™¯é…ç½®")]
     public int mainMenuSceneIndex = 1;
-    public int chapterScene1Index = 2;  // µÚÒ»ÕÂ³¡¾°
-    public int chapterScene2Index = 3;  // µÚ¶şÕÂ³¡¾°
-    public int chapterScene3Index = 4;  // µÚÈıÕÂ³¡¾°
-    public int chapterScene4Index = 5;  // µÚËÄÕÂ³¡¾°
+    public int chapterScene1Index = 2;  // ç¬¬ä¸€ç« åœºæ™¯
+    public int chapterScene2Index = 3;  // ç¬¬äºŒç« åœºæ™¯
+    public int chapterScene3Index = 4;  // ç¬¬ä¸‰ç« åœºæ™¯
+    public int chapterScene4Index = 5;  // ç¬¬å››ç« åœºæ™¯
 
-    [Header("¹ı¶ÉĞ§¹û")]
+    [Header("è¿‡æ¸¡æ•ˆæœ")]
     public Image transitionImage;
     public Camera transitionCamera;
     public float fadeDuration = 0.3f;
+
 
     private void Awake()
     {
@@ -39,7 +41,7 @@ public class SceneLoader : MonoBehaviour
         }
     }
 
-    #region ³õÊ¼»¯·½·¨
+    #region åˆå§‹åŒ–æ–¹æ³•
     private void InitializeTransitionSystem()
     {
         if (transitionCamera != null)
@@ -65,12 +67,12 @@ public class SceneLoader : MonoBehaviour
 
     private void InitializeGame()
     {
-        Debug.Log("SceneLoader: ÓÎÏ·³õÊ¼»¯£¬¼ÓÔØÖ÷²Ëµ¥");
+        Debug.Log("SceneLoader: æ¸¸æˆåˆå§‹åŒ–ï¼ŒåŠ è½½ä¸»èœå•");
         StartCoroutine(LoadMainMenuCoroutine());
     }
     #endregion
 
-    #region ºËĞÄ³¡¾°¹ÜÀí·½·¨
+    #region æ ¸å¿ƒåœºæ™¯ç®¡ç†æ–¹æ³•
     private bool IsSceneLoaded(int sceneIndex)
     {
         for (int i = 0; i < SceneManager.sceneCount; i++)
@@ -86,29 +88,60 @@ public class SceneLoader : MonoBehaviour
 
     private IEnumerator UnloadSceneIfLoaded(int sceneIndex)
     {
-        if (IsSceneLoaded(sceneIndex))
+        // 1. å…ˆæ£€æŸ¥åœºæ™¯æ˜¯å¦å­˜åœ¨
+        if (!IsSceneLoaded(sceneIndex))
         {
-            AsyncOperation unloadOp = SceneManager.UnloadSceneAsync(sceneIndex);
-            while (!unloadOp.isDone)
-            {
-                yield return null;
-            }
+            Debug.Log($"åœºæ™¯ {sceneIndex} æœªåŠ è½½ï¼Œè·³è¿‡å¸è½½");
+            yield break; // ç›´æ¥ç»“æŸåç¨‹
         }
+
+        // 2. å®‰å…¨è°ƒç”¨ UnloadSceneAsync
+        AsyncOperation unloadOp = SceneManager.UnloadSceneAsync(sceneIndex);
+
+        // 3. ğŸ”¥ å…³é”®ä¿®å¤ï¼šæ£€æŸ¥ unloadOp æ˜¯å¦ä¸º null
+        if (unloadOp == null)
+        {
+            Debug.LogWarning($"æ— æ³•å¸è½½åœºæ™¯ {sceneIndex}ï¼ŒUnloadSceneAsync è¿”å› null");
+            yield break; // ç›´æ¥ç»“æŸåç¨‹
+        }
+
+        // 4. ç°åœ¨å®‰å…¨äº†
+        while (!unloadOp.isDone)
+        {
+            yield return null;
+        }
+
+        Debug.Log($"åœºæ™¯ {sceneIndex} å·²æˆåŠŸå¸è½½");
     }
 
     private IEnumerator LoadSceneAsync(int sceneIndex)
     {
-        AsyncOperation loadOp = SceneManager.LoadSceneAsync(sceneIndex, LoadSceneMode.Additive);
-        loadOp.allowSceneActivation = true;
-        loadOp.priority = 1;
-        while (!loadOp.isDone)
+        // é˜²æ­¢é‡å¤åŠ è½½
+        if (IsSceneLoaded(sceneIndex))
         {
-            yield return null;
+            Debug.LogWarning($"åœºæ™¯ {sceneIndex} å·²å­˜åœ¨ï¼Œè·³è¿‡é‡å¤åŠ è½½");
+            Scene scene = SceneManager.GetSceneByBuildIndex(sceneIndex);
+            SceneManager.SetActiveScene(scene);
+            yield break;
         }
+
+        AsyncOperation loadOp = SceneManager.LoadSceneAsync(sceneIndex, LoadSceneMode.Additive);
+        if (loadOp == null)
+        {
+            Debug.LogError($"åŠ è½½åœºæ™¯ {sceneIndex} å¤±è´¥");
+            yield break;
+        }
+
+        while (!loadOp.isDone)
+            yield return null;
+
+        Scene newScene = SceneManager.GetSceneByBuildIndex(sceneIndex);
+        if (newScene.IsValid())
+            SceneManager.SetActiveScene(newScene);
     }
     #endregion
 
-    #region ¹ı¶ÉĞ§¹û·½·¨
+    #region è¿‡æ¸¡æ•ˆæœæ–¹æ³•
     private IEnumerator FadeIn()
     {
         if (transitionImage == null) yield break;
@@ -161,7 +194,7 @@ public class SceneLoader : MonoBehaviour
     }
     #endregion
 
-    #region ³¡¾°ÇĞ»»·½·¨
+    #region åœºæ™¯åˆ‡æ¢æ–¹æ³•
     private IEnumerator LoadMainMenuCoroutine()
     {
         AsyncOperation loadOp = SceneManager.LoadSceneAsync(mainMenuSceneIndex, LoadSceneMode.Additive);
@@ -178,26 +211,29 @@ public class SceneLoader : MonoBehaviour
     }
 
     /// <summary>
-    /// ´ÓÖ÷²Ëµ¥¿ªÊ¼ÓÎÏ·
+    /// ä»ä¸»èœå•å¼€å§‹æ¸¸æˆ
     /// </summary>
     public void StartGame()
     {
+        if (isTransitioning)
+        {
+            Debug.Log("æ­£åœ¨åˆ‡æ¢åœºæ™¯ï¼Œå¿½ç•¥é‡å¤ç‚¹å‡»");
+            return;
+        }
         StartCoroutine(StartGameCoroutine());
     }
 
     private IEnumerator StartGameCoroutine()
     {
+        isTransitioning = true;
         SetTransitionCamera(true);
         yield return null;
         yield return StartCoroutine(FadeIn());
 
-        // ÏÈĞ¶ÔØºó¼ÓÔØ
-        AsyncOperation unloadOp = SceneManager.UnloadSceneAsync(mainMenuSceneIndex);
-        while (!unloadOp.isDone)
-        {
-            yield return null;
-        }
+        // å¸è½½ä¸»èœå•
+        yield return StartCoroutine(UnloadSceneIfLoaded(mainMenuSceneIndex));
 
+        // åŠ è½½ç¬¬ä¸€ç« 
         yield return StartCoroutine(LoadSceneAsync(chapterScene1Index));
 
         Scene newScene = SceneManager.GetSceneByBuildIndex(chapterScene1Index);
@@ -205,26 +241,32 @@ public class SceneLoader : MonoBehaviour
         {
             SceneManager.SetActiveScene(newScene);
 
+            // ç­‰å¾… DialogueManager å°±ç»ªï¼ˆæœ€å¤š 3 ç§’ï¼‰
             float waitTime = 0f;
-            float maxWaitTime = 1.5f;
-            while ((DialogueManager.Instance == null || DialogueManager.Instance.currentSceneUI == null) && waitTime < maxWaitTime)
+            while (waitTime < 3f)
             {
-                waitTime += Time.deltaTime;
+                if (DialogueManager.Instance != null && DialogueManager.Instance.currentSceneUI != null)
+                {
+                    DialogueManager.Instance.SwitchToMain1Dialogue();
+                    break;
+                }
+                waitTime += Time.unscaledDeltaTime;
                 yield return null;
             }
 
-            if (DialogueManager.Instance != null && DialogueManager.Instance.currentSceneUI != null)
+            if (DialogueManager.Instance == null)
             {
-                DialogueManager.Instance.SwitchToMain1Dialogue();
+                Debug.LogError("DialogueManager å®ä¾‹æœªæ‰¾åˆ°ï¼è¯·æ£€æŸ¥æ˜¯å¦åœ¨ Bootstrap åœºæ™¯ä¸­");
             }
         }
 
         yield return StartCoroutine(FadeOut());
         SetTransitionCamera(false);
+        isTransitioning = false;
     }
 
     /// <summary>
-    /// ½øÈëÏÂÒ»ÕÂ³¡¾°
+    /// è¿›å…¥ä¸‹ä¸€ç« åœºæ™¯
     /// </summary>
     public void LoadNextChapterScene()
     {
@@ -243,7 +285,7 @@ public class SceneLoader : MonoBehaviour
         SetTransitionCamera(true);
         yield return StartCoroutine(FadeIn());
 
-        // ±£³ÖÔ­ÓĞË³Ğò£ºÏÈ¼ÓÔØºóĞ¶ÔØ
+        // ä¿æŒåŸæœ‰é¡ºåºï¼šå…ˆåŠ è½½åå¸è½½
         yield return StartCoroutine(LoadSceneAsync(nextSceneIndex));
 
         Scene newScene = SceneManager.GetSceneByBuildIndex(nextSceneIndex);
@@ -276,7 +318,7 @@ public class SceneLoader : MonoBehaviour
     }
 
     /// <summary>
-    /// ·µ»Øµ½Ö÷²Ëµ¥
+    /// è¿”å›åˆ°ä¸»èœå•
     /// </summary>
     public void ReturnToMainMenu()
     {
@@ -288,7 +330,7 @@ public class SceneLoader : MonoBehaviour
         SetTransitionCamera(true);
         yield return StartCoroutine(FadeIn());
 
-        // ±£³ÖÔ­ÓĞË³Ğò
+        // ä¿æŒåŸæœ‰é¡ºåº
         Scene currentScene = SceneManager.GetActiveScene();
         yield return StartCoroutine(UnloadSceneIfLoaded(currentScene.buildIndex));
 
@@ -305,7 +347,7 @@ public class SceneLoader : MonoBehaviour
     }
 
     /// <summary>
-    /// ÖØĞÂ¼ÓÔØµ±Ç°³¡¾°
+    /// é‡æ–°åŠ è½½å½“å‰åœºæ™¯
     /// </summary>
     public void ReloadCurrentScene()
     {
@@ -334,13 +376,13 @@ public class SceneLoader : MonoBehaviour
     }
     #endregion
 
-    #region ¸¨Öú·½·¨
+    #region è¾…åŠ©æ–¹æ³•
     /// <summary>
-    /// ´¦ÀíÓÎÏ·½á¾Ö
+    /// å¤„ç†æ¸¸æˆç»“å±€
     /// </summary>
     public void HandleEnding()
     {
-        Debug.Log("SceneLoader: ´¦ÀíÓÎÏ·½á¾Ö£¬·µ»ØÖ÷²Ëµ¥");
+        Debug.Log("SceneLoader: å¤„ç†æ¸¸æˆç»“å±€ï¼Œè¿”å›ä¸»èœå•");
         ReturnToMainMenu();
     }
     #endregion

@@ -14,5 +14,11 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/SearchScene1.unity
     guid: 5bebd55890cf739428e8072382dfda3f
+  - enabled: 1
+    path: Assets/Scenes/SearchScene2.unity
+    guid: 7a6760044383c0d4c84111f881ab239e
+  - enabled: 1
+    path: Assets/Scenes/SearchScene3.unity
+    guid: 73ccf9f3efbb52c47901302e176d66fb
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 07d88d664bf964d3f8a23b79006e608e, type: 3}
