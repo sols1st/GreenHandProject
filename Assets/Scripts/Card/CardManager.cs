@@ -1,8 +1,5 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,10 +8,8 @@ public class CardManager : MonoBehaviour
     public static CardManager Instance { get; private set; }
     public GameObject newCard;    
     public Image newCardImage;
-    public TMP_Text newCardName;
     public GameObject cardDetailCanvas; 
     public Image cardDetailImage;
-    public TMP_Text cardDetailName;
     public GameObject endChoiceCanvas;
     public GameObject endButton;
     public GameObject cardBagButton;

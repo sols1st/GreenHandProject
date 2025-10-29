@@ -12,6 +12,7 @@ public class Knife : Interactable
             line.SetActive(true);
         }
         centerLine.ShiningLine();
+        DeductionManager.Instance.DisableAllInteractable(true);
     }
 
     public void CutLine()
