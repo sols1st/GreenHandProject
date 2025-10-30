@@ -22,14 +22,17 @@ public class GameEndCanvasController : MonoBehaviour
     /// <summary>
     /// 退出应用程序
     /// </summary>
-    private void ExitGame()
+    public void ExitGame()
     {
         Debug.Log("点击游戏结束界面，退出应用程序");
 
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#else
-            Application.Quit();
-#endif
+        // 通知GlobalEscapeManager界面已关闭
+        if (GlobalEscapeManager.Instance != null)
+        {
+            GlobalEscapeManager.Instance.OnGameEndCanvasClosed();
+        }
+
+        // 执行退出
+        GlobalEscapeManager.Instance.ExitGame();
     }
 }

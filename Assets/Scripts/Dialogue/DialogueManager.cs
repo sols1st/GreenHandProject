@@ -55,7 +55,6 @@ public class DialogueManager : MonoBehaviour
 
     [Header("【游戏结束界面】")]
     public GameObject gameEndCanvasPrefab;
-    private GameObject gameEndCanvasInstance; // 游戏结束Canvas实例
 
     internal SceneDialogueUI currentSceneUI; // 当前场景的UI控制器
 
@@ -768,27 +767,42 @@ public class DialogueManager : MonoBehaviour
     /// </summary>
     private void ShowGameEndCanvas()
     {
-        if (gameEndCanvasPrefab != null)
+        if (GlobalEscapeManager.Instance != null)
         {
-            // 直接创建并显示实例
-            gameEndCanvasInstance = Instantiate(gameEndCanvasPrefab);
+            // 使用全局ESC管理器显示游戏结束界面
+            GlobalEscapeManager.Instance.ShowGameEndCanvas();
         }
         else
         {
-            ExitGame();
+            // 备用方案
+            if (gameEndCanvasPrefab != null)
+            {
+                Instantiate(gameEndCanvasPrefab);
+            }
+            else
+            {
+                ExitGame();
+            }
         }
     }
 
-    private void ExitGame()
+    public void ExitGame()
     {
-        Debug.Log("退出游戏");
-
+        if (GlobalEscapeManager.Instance != null)
+        {
+            GlobalEscapeManager.Instance.ExitGame();
+        }
+        else
+        {
+            Debug.Log("退出游戏");
 #if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
+            UnityEditor.EditorApplication.isPlaying = false;
 #else
-        Application.Quit();
+            Application.Quit();
 #endif
+        }
     }
+
 
     /// <summary>
     /// 大字报关闭后继续对话流程
