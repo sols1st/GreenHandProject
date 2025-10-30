@@ -649,7 +649,7 @@ public class DialogueManager : MonoBehaviour
     {
         if (!HasValidUI()) return;
 
-        if (sceneId == "S005" || sceneId == "S001")
+        if (sceneId == "S005" || sceneId == "S001" || sceneId == "S008")
         {
             string backgroundPath = backgroundResPath + sceneId;
             Sprite backgroundSprite = Resources.Load<Sprite>(backgroundPath);
