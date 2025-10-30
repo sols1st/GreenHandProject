@@ -146,8 +146,8 @@ public class SceneLoader : MonoBehaviour
         yield return LoadSceneAsync(chapterScene1Index);
 
         ForceHideAllUI();
-        yield return null;
-        yield return null;
+        // yield return null;
+        // yield return null;
 
         if (DialogueManager.Instance != null)
         {
