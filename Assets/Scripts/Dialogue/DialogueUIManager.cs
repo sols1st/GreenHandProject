@@ -152,8 +152,8 @@ public class DialogueUIManager
         {
             OptionText = optData[0],
             TargetProcess = optData[1],
-            RequireCard = optData.Length > 2 ? optData[2] : "",
-            GainedCard = optData.Length > 3 ? optData[3] : ""
+            RequireCard = optData.Length > 2 && !string.IsNullOrEmpty(optData[2]) ? optData[2] : "",
+            GainedCard = optData.Length > 3 && !string.IsNullOrEmpty(optData[3]) ? optData[3] : ""
         };
 
         bool hasGainedCard = false;

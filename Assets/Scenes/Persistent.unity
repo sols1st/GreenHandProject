@@ -346,6 +346,10 @@ PrefabInstance:
       value: SceneLoader
       objectReference: {fileID: 0}
     - target: {fileID: 6452155405286393234, guid: 6e3a2089239192f4d82e23d8ca7e4b9b, type: 3}
+      propertyPath: fadeDuration
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6452155405286393234, guid: 6e3a2089239192f4d82e23d8ca7e4b9b, type: 3}
       propertyPath: transitionImage
       value: 
       objectReference: {fileID: 1549700643}
@@ -1829,6 +1833,10 @@ PrefabInstance:
     - target: {fileID: 5249353694242439220, guid: e3fa8a4e85e944362ad252f5a7d9b111, type: 3}
       propertyPath: m_AnchorMin.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7778998364299520821, guid: e3fa8a4e85e944362ad252f5a7d9b111, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -47.757324
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
