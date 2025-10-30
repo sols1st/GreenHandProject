@@ -27,10 +27,29 @@ public class GlobalEscapeManager : MonoBehaviour
 
     private void Update()
     {
-        // 全局ESC键检测 - 在任何时候按下ESC都显示游戏结束界面
-        if (Input.GetKeyDown(KeyCode.Escape) && !isGameEndCanvasShowing)
+        // ESC显示游戏结束界面
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
-            ShowGameEndCanvas();
+            if (!isGameEndCanvasShowing)
+            {
+                ShowGameEndCanvas(); // 显示界面
+            }
+            else
+            {
+                HideGameEndCanvas(); // 隐藏界面
+            }
+        }
+    }
+
+    // 隐藏游戏结束界面
+    public void HideGameEndCanvas()
+    {
+        if (isGameEndCanvasShowing && gameEndCanvasInstance != null)
+        {
+            Destroy(gameEndCanvasInstance);
+            gameEndCanvasInstance = null;
+            isGameEndCanvasShowing = false;
+            Debug.Log("ESC键隐藏退出界面");
         }
     }
 

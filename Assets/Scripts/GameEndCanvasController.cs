@@ -11,12 +11,6 @@ public class GameEndCanvasController : MonoBehaviour
         {
             ExitGame();
         }
-
-        // ESC¼üÍË³ö
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            ExitGame();
-        }
     }
 
     /// <summary>
