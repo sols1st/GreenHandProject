@@ -346,10 +346,6 @@ PrefabInstance:
       value: SceneLoader
       objectReference: {fileID: 0}
     - target: {fileID: 6452155405286393234, guid: 6e3a2089239192f4d82e23d8ca7e4b9b, type: 3}
-      propertyPath: fadeDuration
-      value: 0.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6452155405286393234, guid: 6e3a2089239192f4d82e23d8ca7e4b9b, type: 3}
       propertyPath: transitionImage
       value: 
       objectReference: {fileID: 1549700643}
